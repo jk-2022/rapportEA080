@@ -6,6 +6,7 @@ from myaction.myaction_projet import *
 from myaction.myaction_ouvrage import *
 from myaction.myaction_entreprise import *
 from myaction.myaction_suivi import Suivi, load_all_suivis
+from myaction.myaction_village import Village, load_all_villages
 
 @ft.observable
 @dataclass
@@ -14,6 +15,7 @@ class AppState:
     projets:list[Projet]=field(default_factory=list)
     ouvrages:list[Ouvrage]=field(default_factory=list)
     entreprises:list[Entreprise]=field(default_factory=list)
+    villages:list[Village]=field(default_factory=list)
     suivis:list[Suivi]=field(default_factory=list)
     pannes:list[Panne]=field(default_factory=list)
     selected_projet:Projet|None=None
@@ -33,6 +35,10 @@ class AppState:
     def load_entreprises(self):
         self.entreprises=load_all_entreprises()
         return self.entreprises
+    
+    def load_villages(self):
+        self.villages=load_all_villages()
+        return self.villages
 
     def load_suivis(self):
         self.suivis=load_all_suivis(self.selected_ouvrage.id)

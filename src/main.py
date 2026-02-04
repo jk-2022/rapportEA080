@@ -1,4 +1,5 @@
 import flet as ft
+from myaction.myaction_village import init_db_village
 from screens.acceuilscreen.acceuilview import AcceuilView
 from myaction.myaction_entreprise import init_db_entreprise
 from myaction.myaction_ouvrage import init_db_ouvrage
@@ -16,10 +17,14 @@ from screens.screens import *
 from mystorage import *
 
 async def main(page: ft.Page):
-    page.scroll = ft.ScrollMode.ADAPTIVE
     page.title = "Gestion des ouvrages EA"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.window.width=460
+    page.padding=0
+    page.expand=True
+    page.scroll = ft.ScrollMode.ADAPTIVE
+    # print(page.window.height)
+    set_value("win_height",page.window.height)
     
     storage_paths = ft.StoragePaths()
     
@@ -60,6 +65,10 @@ async def main(page: ft.Page):
             page.views.append(StatCommuneView(state=state))
         if route == "/statcanton":
             page.views.append(StatCantonView(state=state))
+        if route == "/list-entreprise":
+            page.views.append(ListEntrepriseView(state=state))
+        if route == "/list-village":
+            page.views.append(VillageView(state=state))
         if route == "/intervaldate":
             page.views.append(IntervalDateView(state=state))
         if route == "/archive":
@@ -144,6 +153,7 @@ async def main(page: ft.Page):
     await init_db_foration()
     await init_db_suivi()
     await init_db_panne()
+    await init_db_village()
 
     
     page.drawer=page_drawer(handle_change=handle_change,
