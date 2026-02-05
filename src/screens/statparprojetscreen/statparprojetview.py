@@ -8,7 +8,7 @@ class StatParProjetView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-        
+        self.route = "/statparprojet"
         self.projet = ft.Dropdown(
             label="Voir stat par projet", 
             expand=True,
@@ -25,12 +25,15 @@ class StatParProjetView(ft.View):
             ft.SafeArea(
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                            ft.IconButton(icon=ft.Icons.ARROW_BACK,
-                                          on_click=lambda e: self.page.on_view_pop()),
-                            ft.Text(f"📁 Stastistiques par projets")
-                            ]
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(icon=ft.Icons.ARROW_BACK,
+                        #                   on_click=lambda e: self.page.on_view_pop()),
+                        #     ft.Text(f"📁 Stastistiques par projets")
+                        #     ]
+                        # ),
+                        ft.AppBar(
+                            title=ft.Text(f"📁 Stastistiques par Projet")
                         ),
                         self.projet,
                         self.projet_res_cont

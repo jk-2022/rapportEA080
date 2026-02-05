@@ -8,7 +8,7 @@ class StatCantonView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-        
+        self.route = "/statcanton"
         self.canton = ft.Dropdown(
             label="Voir stat par canton",
             expand=True,
@@ -25,14 +25,17 @@ class StatCantonView(ft.View):
             ft.SafeArea(
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e :self.page.on_view_pop()),
-                            ft.Text(f"📁 Stastistiques par Canton")
-                            ]
+                        ft.AppBar(
+                            title=ft.Text(f"📁 Stastistiques par Canton")
                         ),
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(
+                        #         icon=ft.Icons.ARROW_BACK,
+                        #         on_click=lambda e :self.page.on_view_pop()),
+                        #     ft.Text(f"📁 Stastistiques par Canton")
+                        #     ]
+                        # ),
                         self.canton,
                          self.canton_res_cont
                     

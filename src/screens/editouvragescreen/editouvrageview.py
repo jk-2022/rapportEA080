@@ -9,6 +9,7 @@ class EditOuvrageView(ft.View):
     def __init__(self,state):
         super().__init__()
         self.state=state
+        self.page.route = "/edit-ouvrage"
         self.ouvrage=self.state.selected_ouvrage
         self.prefecture = ft.Dropdown(
             label="Préfecture",

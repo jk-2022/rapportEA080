@@ -8,7 +8,7 @@ class StatCommuneView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-        
+        self.route = "/statcommune"
         self.commune = ft.Dropdown(
             label="Voir stat par commune",
             expand=True,
@@ -24,14 +24,17 @@ class StatCommuneView(ft.View):
             ft.SafeArea(
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e: self.page.on_view_pop()
-                                ),
-                            ft.Text(f"📁 Stastistiques par Communes")
-                            ]
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(
+                        #         icon=ft.Icons.ARROW_BACK,
+                        #         on_click=lambda e: self.page.on_view_pop()
+                        #         ),
+                        #     ft.Text(f"📁 Stastistiques par Communes")
+                        #     ]
+                        # ),
+                        ft.AppBar(
+                            title=ft.Text(f"📁 Stastistiques par Commune")
                         ),
                         self.commune,
                         self.commune_res_cont

@@ -19,7 +19,8 @@ class StatIntervalControl(ft.Card):
             padding=ft.padding.all(10),
             expand=True,
             content=ft.Column(
-                        [   ft.Row(
+                        [   
+                         ft.Row(
                                 [
                                     ft.Container(
                                         content=ft.Text(

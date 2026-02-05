@@ -2,23 +2,72 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    def animate_container(e: ft.Event[ft.Button]):
-        container.width = 100 if container.width == 150 else 150
-        container.height = 50 if container.height == 150 else 150
-        container.bgcolor = (
-            ft.Colors.BLUE if container.bgcolor == ft.Colors.RED else ft.Colors.RED
+    page.title = "Routes Example"
+
+    print("Initial route:", page.route)
+
+    async def open_mail_settings(e):
+        await page.push_route("/settings/mail")
+
+    async def open_settings(e):
+        await page.push_route("/settings")
+
+    def route_change():
+        print("Route change:", page.route)
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                route="/",
+                controls=[
+                    ft.AppBar(title=ft.Text("Flet app")),
+                    ft.Button("Go to settings", on_click=open_settings),
+                ],
+            )
         )
-        container.update()
+        if page.route == "/settings" or page.route == "/settings/mail":
+            page.views.append(
+                ft.View(
+                    route="/settings",
+                    controls=[
+                        ft.AppBar(
+                            title=ft.Text("Settings"),
+                            bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
+                        ),
+                        ft.Text("Settings!", theme_style=ft.TextThemeStyle.BODY_MEDIUM),
+                        ft.Button(
+                            content="Go to mail settings",
+                            on_click=open_mail_settings,
+                        ),
+                    ],
+                )
+            )
+        if page.route == "/settings/mail":
+            page.views.append(
+                ft.View(
+                    route="/settings/mail",
+                    controls=[
+                        ft.AppBar(
+                            title=ft.Text("Mail Settings"),
+                            bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
+                        ),
+                        ft.Text("Mail settings!"),
+                    ],
+                )
+            )
+        page.update()
 
-    page.add(
-        container := ft.Container(
-            width=150,
-            height=150,
-            bgcolor=ft.Colors.RED,
-            animate=ft.Animation(duration=1000, curve=ft.AnimationCurve.BOUNCE_OUT),
-        ),
-        ft.Button("Animate container", on_click=animate_container),
-    )
+    async def view_pop(e):
+        if e.view is not None:
+            print("View pop:", e.view)
+            page.views.remove(e.view)
+            top_view = page.views[-1]
+            await page.push_route(top_view.route)
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+
+    route_change()
 
 
-ft.run(main)
+if __name__ == "__main__":
+    ft.run(main)

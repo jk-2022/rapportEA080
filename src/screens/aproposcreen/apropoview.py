@@ -6,6 +6,7 @@ class ApropoView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
+        self.route = "/apropos"
         bac_cnt=ft.Container(height=40,
                           content=ft.Row(
                               controls=[

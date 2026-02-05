@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 from myaction.myaction_village import init_db_village
 from screens.acceuilscreen.acceuilview import AcceuilView
@@ -28,6 +29,8 @@ async def main(page: ft.Page):
     
     storage_paths = ft.StoragePaths()
     
+    
+    
     theme=get_value('theme')
     if theme=="ThemeMode.LIGHT":
         theme=ft.ThemeMode.LIGHT
@@ -40,67 +43,86 @@ async def main(page: ft.Page):
     theme = ft.Theme()
     theme.page_transitions.android = ft.PageTransitionsTheme.android
 
-    state=AppState()    
-    def route_change(route):
-        print(route)
-        if route == "/projet":
-            page.views.append(ProjectView(state=state))
-        if route == "/list-ouvrage":
-            page.views.append(OuvrageView(state=state))
-        if route == "/create-ouvrage":
-            page.views.append(CreateOuvrageView(state=state))
-        if route == "/edit-ouvrage":
-            page.views.append(EditOuvrageView(state=state))
-        if route == "/recap-ouvrage":
-            page.views.append(RecapOuvrageView(state=state))
-        if route == "/filtrer-ouvrage":
-            page.views.append(FiltreOuvrageView(state=state))
-        if route == "/stats":
-            page.views.append(StatView(state=state))
-        if route == "/statgeneral":
-            page.views.append(StatGeneralView(state=state))
-        if route == "/statparprojet":
-            page.views.append(StatParProjetView(state=state))
-        if route == "/statcommune":
-            page.views.append(StatCommuneView(state=state))
-        if route == "/statcanton":
-            page.views.append(StatCantonView(state=state))
-        if route == "/list-entreprise":
-            page.views.append(ListEntrepriseView(state=state))
-        if route == "/list-village":
-            page.views.append(VillageView(state=state))
-        if route == "/intervaldate":
-            page.views.append(IntervalDateView(state=state))
-        if route == "/archive":
-            page.views.append(ArchiveView(state=state))
-        if route == "/apropos":
-            page.views.append(ApropoView(state=state))
-        if route == "/settings":
-            page.views.append(SettingView(state=state))
+    state=AppState()
+    
+    
 
-    def view_pop():
-        page.views.pop()
-        top_view = page.views.pop()
-        page.views.append(top_view)
-
-    async def go_apropos(e):
-        await handle_change()
-        page.page.on_route_change("/apropos")
+    # async def go_apropos(e):
+    #     await handle_change()
+    #     page.on_route_change("/apropos")
         
-    async def handle_change():
-        await page.close_drawer()
+    # async def handle_change():
+    #     await page.close_drawer()
     
-    async def go_archive(e):
-        await handle_change()
-        page.on_route_change('/archive')
+    # async def go_archive(e):
+    #     await handle_change()
+    #     page.on_route_change('/archive')
     
-    async def go_settings(e):
-        await handle_change()
-        page.on_route_change('/settings')
+    # async def go_settings(e):
+    #     await handle_change()
+    #     page.on_route_change('/settings')
     
-    async def go_stats(e):
-        await handle_change()
-        page.on_route_change('/stats')
+    # async def go_stats(e):
+    #     await handle_change()
+    #     page.on_route_change('/stats')
+        
+    # page.drawer= page_drawer(handle_change=handle_change,
+    #                                 go_apropos=go_apropos,
+    #                                 go_archive=go_archive,
+    #                                 go_stats=go_stats,
+    #                                 go_settings=go_settings)
+    
+        
+    def route_change():
+        page.views.clear()
+        page.views.append(AcceuilView(state=state))
+        if page.route == "/projet" or page.route == "/projet/list-ouvrage":
+            page.views.append(ProjectView(state=state))
+        if page.route == "/projet/list-ouvrage"  or page.route == "/projet/list-ouvrage/recap-ouvrage":
+            page.views.append(OuvrageView(state=state))
+        if page.route == "/projet/list-ouvrage/recap-ouvrage":
+            page.views.append(RecapOuvrageView(state=state))
+        # if page.route == "create-ouvrage":
+        #     page.views.append(CreateOuvrageView(state=state))
+        # if page.route == "/edit-ouvrage":
+        #     page.views.append(EditOuvrageView(state=state))
+        # if page.route == "/projet/list-ouvrage/filtrer-ouvrage":
+        #     page.views.append(FiltreOuvrageView(state=state))
+        # if page.route == "/stats":
+        #     page.views.append(StatView(state=state))
+        # if page.route == "/statgeneral":
+        #     page.views.append(StatGeneralView(state=state))
+        # if page.route == "/statparprojet":
+        #     page.views.append(StatParProjetView(state=state))
+        # if page.route == "/statcommune":
+        #     page.views.append(StatCommuneView(state=state))
+        # if page.route == "/statcanton":
+        #     page.views.append(StatCantonView(state=state))
+        # if page.route == "/list-entreprise":
+        #     page.views.append(ListEntrepriseView(state=state))
+        # if page.route == "/list-village":
+        #     page.views.append(VillageView(state=state))
+        # if page.route == "/intervaldate":
+        #     page.views.append(IntervalDateView(state=state))
+        # if page.route == "/archive":
+        #     page.views.append(ArchiveView(state=state))
+        # if page.route == "/apropos":
+        #     page.views.append(ApropoView(state=state))
+        # if page.route == "/settings":
+        #     page.views.append(SettingView(state=state))
+        # page.update()
+
+    # async def view_pop():
+    #     page.views.pop()
+    #     top_view = page.views.pop().route
+    #     await page.push_route(top_view)
+        
+    async def view_pop(e):
+        if e.view is not None:
+            print("View pop:", e.view)
+            page.views.remove(e.view)
+            top_view = page.views[-1]
+            await page.push_route(top_view.route)
     
     async def get_absolute_path():
         platform = page.platform.name
@@ -155,16 +177,9 @@ async def main(page: ft.Page):
     await init_db_panne()
     await init_db_village()
 
-    
-    page.drawer=page_drawer(handle_change=handle_change,
-                                    go_apropos=go_apropos,
-                                    go_archive=go_archive,
-                                    go_stats=go_stats,
-                                    go_settings=go_settings)
-    
     page.on_route_change=route_change
     page.on_view_pop= view_pop
-    page.add(AcceuilView(page))
+    route_change()
 
 if __name__=="__main__":
     ft.run(main)

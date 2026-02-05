@@ -9,7 +9,7 @@ class VillageView(ft.View):
         super().__init__()
         self.padding = 0
         self.state=state
-        
+        self.route = "/list-village"
         self.searsh_button = ft.Button(
             "Filter",icon=ft.Icons.SEARCH, 
             on_click=lambda e : self.go_filter_page()
@@ -31,19 +31,22 @@ class VillageView(ft.View):
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(
-                                    icon=ft.Icons.ARROW_BACK, 
-                                    on_click= lambda e:self.page.on_view_pop()),
-                                ft.Text(
-                                    "Liste des villages ", 
-                                    text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                            )
-                    ),
+                    # ft.Container(
+                    #     content=ft.Row(
+                    #             [
+                    #             ft.IconButton(
+                    #                 icon=ft.Icons.ARROW_BACK, 
+                    #                 on_click= lambda e:self.page.on_view_pop()),
+                    #             ft.Text(
+                    #                 "Liste des villages ", 
+                    #                 text_align=ft.TextAlign.CENTER)
+                    #             ]
+                    #             # ,alignment=MainAxisAlignment.CENTER
+                    #         )
+                    # ),
+                    ft.AppBar(
+                            title=ft.Text(f"Liste des Villages")
+                        ),
                     
                     ft.Container(
                         content=ft.Row(

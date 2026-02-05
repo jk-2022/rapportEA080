@@ -3,8 +3,9 @@ import flet as ft
 class ListEntrepriseView(ft.View):
     def __init__(self,state):
         super().__init__()
-        self.padding = 0
         self.state=state
+        self.route = "/list-entreprise"
+        self.padding = 0
         self.entreprise_list_cont = ft.Column(
             expand=True,
             scroll=ft.ScrollMode.ALWAYS
@@ -17,19 +18,22 @@ class ListEntrepriseView(ft.View):
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(
-                                    icon=ft.Icons.ARROW_BACK, 
-                                    on_click= lambda e:self.page.on_view_pop()),
-                                ft.Text(
-                                    "Liste des entreprises ", 
-                                    text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                            )
-                    ),
+                    # ft.Container(
+                    #     content=ft.Row(
+                    #             [
+                    #             ft.IconButton(
+                    #                 icon=ft.Icons.ARROW_BACK, 
+                    #                 on_click= lambda e:self.page.on_view_pop()),
+                    #             ft.Text(
+                    #                 "Liste des entreprises ", 
+                    #                 text_align=ft.TextAlign.CENTER)
+                    #             ]
+                    #             # ,alignment=MainAxisAlignment.CENTER
+                    #         )
+                    # ),
+                    ft.AppBar(
+                            title=ft.Text(f"Liste des Entreprises")
+                        ),
                     ft.Container(
                         content=ft.Row(
                             [

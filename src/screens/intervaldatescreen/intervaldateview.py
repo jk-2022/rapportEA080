@@ -10,7 +10,7 @@ class IntervalDateView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-            
+        self.route = "/intervaldate"
         self.ouvrages_cont=ft.Column(
             expand=True, 
             scroll=ft.ScrollMode.ALWAYS)
@@ -47,14 +47,17 @@ class IntervalDateView(ft.View):
             ft.SafeArea(
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e: self.page.on_view_pop()
-                                ),
-                            ft.Text(f"📁 Stastistiques par Intervall de date")
-                            ]
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(
+                        #         icon=ft.Icons.ARROW_BACK,
+                        #         on_click=lambda e: self.page.on_view_pop()
+                        #         ),
+                        #     ft.Text(f"📁 Stastistiques par Intervall de date")
+                        #     ]
+                        # ),
+                        ft.AppBar(
+                            title=ft.Text(f"📁 Stastistiques par Intervalle")
                         ),
                         ft.Row(
                             [

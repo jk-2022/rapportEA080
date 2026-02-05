@@ -8,19 +8,22 @@ class StatView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-        
+        self.route = "/stats"
         self.controls.append(
             ft.SafeArea(
                 ft.Column(
                     controls=[
-                        ft.Row(
-                            [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e :self.page.on_view_pop()
-                                ),
-                            ft.Text(f"📁 Stastistiques")
-                            ]
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(
+                        #         icon=ft.Icons.ARROW_BACK,
+                        #         on_click=lambda e :self.page.on_view_pop()
+                        #         ),
+                        #     ft.Text(f"📁 Stastistiques")
+                        #     ]
+                        # ),
+                        ft.AppBar(
+                            title=ft.Text(f"📁 Stastistiques")
                         ),
                         
                         ft.Container(

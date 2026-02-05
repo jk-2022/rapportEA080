@@ -29,8 +29,9 @@ def get_icon_for_extension(extension: str):
 class ArchiveView(ft.View):
     def __init__(self,state):
         super().__init__()
-        self.padding = 0
         self.state=state
+        self.route = "/archive"
+        self.padding = 0
         self.share = ft.Share()
         
         self.archive_list = ft.Column(

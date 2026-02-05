@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 
 from myaction.myaction_ouvrage import Ouvrage, delete_ouvrage
@@ -11,14 +12,13 @@ class OuvrageCard(ft.Card):
         self.formcontrol=formcontrol
         
         self.content=ft.Container(
-            on_click= lambda e :self.selectouvrage(),
+            on_click=self.selectouvrage,
             padding= ft.Padding.all(10),
             data=ouvrage,
             ink=True,
             expand=True,
             content=ft.Row(
-                            [
-                                
+                    [      
                         ft.Container(
                             expand=True,
                             content=ft.Column(
@@ -53,9 +53,9 @@ class OuvrageCard(ft.Card):
                 )
             )
         
-    def selectouvrage(self):
+    async def selectouvrage(self, e):
         self.state.selected_ouvrage=self.ouvrage
-        self.page.on_route_change("/recap-ouvrage")
+        await self.page.push_route("/projet/list-ouvrage/recap-ouvrage")
         
     def show_edit_ouvrage(self):
         self.state.selected_ouvrage=self.ouvrage 

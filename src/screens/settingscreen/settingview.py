@@ -7,20 +7,23 @@ class SettingView(ft.View):
         super().__init__()
         self.padding = 0
         self.state=state
-
+        self.route = "/settings"
         # self.titlefield=ft.TextField(expand=True, height=40, value="basedb")
 
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e:self.page.on_view_pop()),
-                                ft.Text("Paramètres ", text_align=ft.TextAlign.CENTER)
-                                ]
-                            )
-                    ),
+                    ft.AppBar(
+                            title=ft.Text("Paramètres")
+                        ),
+                    # ft.Container(
+                    #     content=ft.Row(
+                    #             [
+                    #             ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e:self.page.on_view_pop()),
+                    #             ft.Text("Paramètres ", text_align=ft.TextAlign.CENTER)
+                    #             ]
+                    #         )
+                    # ),
                     ft.Container(
                         padding=ft.Padding.only(right=10),
                         content=ft.Row([

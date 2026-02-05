@@ -14,7 +14,7 @@ class FiltreOuvrageView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state = state
-
+        self.route = "/projet/list-ouvrage/filtrer-ouvrage"
         self.liste_ouvrage_filtrer=[]
         self.dropdown_type = ft.Dropdown(
         label="Type",
@@ -55,11 +55,14 @@ class FiltreOuvrageView(ft.View):
             ft.SafeArea(
                 ft.Column(
                     [
-                        ft.Row(
-                            [
-                            ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e :self.page.on_view_pop()),
-                            ft.Text("Filtrer les ouvrages"),
-                            ]
+                        # ft.Row(
+                        #     [
+                        #     ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e :self.page.on_view_pop()),
+                        #     ft.Text("Filtrer les ouvrages"),
+                        #     ]
+                        # ),
+                        ft.AppBar(
+                            title=ft.Text(f"Recherche par filtrage")
                         ),
                         ft.Row(
                             [

@@ -1,5 +1,5 @@
 import flet as ft
-
+import asyncio
 from mystorage import *
 from screens.projetscreen.projetupdateform import ProjetUpdateForm
 from myaction.myaction_projet import delete_projet, Projet
@@ -13,7 +13,7 @@ class ProjetCard(ft.Card):
         self.formcontrol=formcontrol
 
         self.content=ft.Container(
-            on_click=lambda e: self.selectprojet(),
+            on_click=self.selectprojet,
             padding=ft.Padding.all(10),
             data=projet,
             ink=True,
@@ -58,9 +58,9 @@ class ProjetCard(ft.Card):
                 ))
         
         
-    def selectprojet(self):
+    async def selectprojet(self,e):
         self.state.selected_projet=self.projet
-        self.page.on_route_change("/list-ouvrage")
+        await self.page.push_route("/projet/list-ouvrage")
 
     def show_delete_projet(self):
         name=self.projet.name

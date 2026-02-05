@@ -1,4 +1,5 @@
 import flet as ft
+import asyncio
 from .ouvragecard import OuvrageCard
 
 class OuvrageView(ft.View):
@@ -6,6 +7,7 @@ class OuvrageView(ft.View):
         super().__init__()
         self.padding = 0
         self.state=state
+        self.route = "/projet/list-ouvrage"
         self.projet=self.state.selected_projet
         self.ouvrage_list = ft.Column(
             expand=True,
@@ -13,11 +15,11 @@ class OuvrageView(ft.View):
         )
         self.searsh_button = ft.Button(
             "Filter",icon=ft.Icons.SEARCH, 
-            on_click=lambda e : self.go_filter_page()
+            on_click= self.go_filter_page
             )
         self.add_button = ft.Button(
             "Ajouter",icon=ft.Icons.ADD, 
-            on_click=lambda e :self.go_create_page()
+            on_click=self.go_create_page
             )
         self.nbre_ouvrage_cnt=ft.Row(
                                     [
@@ -28,19 +30,7 @@ class OuvrageView(ft.View):
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(
-                                    icon=ft.Icons.ARROW_BACK, 
-                                    on_click= lambda e:self.page.on_view_pop()),
-                                ft.Text(
-                                    "Tous ouvrages confondus ", 
-                                    text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                            )
-                    ),
+                    ft.AppBar(title=ft.Text("Tous ouvrages confondus")),
                     ft.Container(
                         content=ft.Row(
                             [
@@ -71,11 +61,11 @@ class OuvrageView(ft.View):
                 OuvrageCard(state=self.state, ouvrage=ouvrage, formcontrol=self)
             )
     
-    def go_create_page(self):
-        self.page.on_route_change("/create-ouvrage")
+    async def go_create_page(self,e):
+        await self.page.push_route("/projet/list-ouvrage/create-ouvrage")
 
-    def go_filter_page(self):
-        self.page.on_route_change("/filtrer-ouvrage")
+    async def go_filter_page(self,e):
+        await self.page.push_route("/projet/list-ouvrage/filtrer-ouvrage")
         
     def close_dlg(self):
         self.page.pop_dialog()

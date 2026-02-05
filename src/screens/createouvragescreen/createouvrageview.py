@@ -14,7 +14,7 @@ class CreateOuvrageView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
-        
+        self.route = "/projet/list-ouvrage/create-ouvrage" 
         # self.geo = ftg.Geolocator(
         #     configuration=ftg.GeolocatorConfiguration(
         #         accuracy=ftg.GeolocatorPositionAccuracy.LOW
@@ -132,17 +132,19 @@ class CreateOuvrageView(ft.View):
                 scroll=ft.ScrollMode.ALWAYS,
                 spacing=10,
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                    ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                                                on_click= lambda e:self.page.on_view_pop()),
-                                    ft.Text("Créer un nouveau Ouvrage ", 
-                                            text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                                    )
-                                ),
+                    # ft.Container(
+                    #     content=ft.Row(
+                    #             [
+                    #                 ft.IconButton(icon=ft.Icons.ARROW_BACK, 
+                    #                             on_click= lambda e:self.page.on_view_pop()),
+                    #                 ft.Text("Créer un nouveau Ouvrage ", 
+                    #                         text_align=ft.TextAlign.CENTER)
+                    #             ]
+                    #             # ,alignment=MainAxisAlignment.CENTER
+                    #                 )
+                    #             )
+                    ft.AppBar(title=ft.Text("Créer un nouveau ouvrage"))
+                    ,
                             ft.Row(
                                 controls=[
                                     self.prefecture,

@@ -1,4 +1,5 @@
 
+import asyncio
 import flet as ft
 
 from screens.projetscreen.projetcard import ProjetCard
@@ -8,6 +9,7 @@ class ProjectView(ft.View):
     def __init__(self,state):
         super().__init__()
         self.padding = 0
+        self.route="/projet"
         self.state=state
         self.project_list = ft.Column(
             expand=1,
@@ -21,24 +23,15 @@ class ProjectView(ft.View):
         self.controls=[ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                                              on_click=lambda e :self.page.on_view_pop()
-                                              ),
-                                ft.Text("Liste des projets ",
-                                        text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                            ),
-                    ),
+                    ft.AppBar(
+                            title=ft.Text("Projets")
+                        ),
                     ft.Container(
                         padding=ft.Padding.only(right=20),
                         content=ft.Row(
                         [
                             ft.Button("Statistiques", 
-                                      on_click=lambda e: self.go_to_static(), 
+                                      on_click=self.go_to_static, 
                                       icon=ft.Icons.STACKED_LINE_CHART_OUTLINED)
                         ],alignment=ft.MainAxisAlignment.END
                     )
@@ -75,8 +68,8 @@ class ProjectView(ft.View):
         )
         self.page.show_dialog(self.dlg_modal)
         
-    def go_to_static(self):
-        self.page.on_route_change("/stats")
+    async def go_to_static(self,e):
+        await self.page.push_route("/stats")
         
     def close_dlg(self):
         self.page.pop_dialog()

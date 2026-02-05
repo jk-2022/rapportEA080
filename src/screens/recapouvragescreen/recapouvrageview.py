@@ -13,6 +13,7 @@ class RecapOuvrageView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.state=state
+        self.route = "/projet/list-ouvrage/recap-ouvrage"
         self.projet=self.state.selected_projet
         self.ouvrage=self.state.selected_ouvrage
 
@@ -27,13 +28,16 @@ class RecapOuvrageView(ft.View):
 
         self.controls=[
             ft.Container(height=5),
-            ft.Row(
-                    [
-                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click= lambda e:self.page.on_view_pop()),
-                    ft.Text("RECAP", text_align=ft.TextAlign.CENTER)
-                    ]
-                    # ,alignment=MainAxisAlignment.CENTER
-                ),
+            ft.AppBar(
+                            title=ft.Text("RECAP"), bgcolor=ft.Colors.SURFACE_BRIGHT
+                        ),
+            # ft.Row(
+            #         [
+            #         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click= lambda e:self.page.on_view_pop()),
+            #         ft.Text("RECAP", text_align=ft.TextAlign.CENTER)
+            #         ]
+            #         # ,alignment=MainAxisAlignment.CENTER
+            #     ),
                 ft.Tabs(
                     length=5,
                     expand=True,

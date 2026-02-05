@@ -3,18 +3,18 @@ import flet as ft
 from mystorage import *
 from .drawer import page_drawer
 
-class AcceuilView(ft.Column):
+class AcceuilView(ft.View):
     def __init__(self,state):
         super().__init__()
         self.padding=0
+        self.route="/"
         self.state=state
-        self.expand=True
         page_height=get_value("win_height")
         bar_cnt=ft.Container(height=60,
                          content=ft.Row(
                              [
                                 ft.IconButton(icon=ft.Icons.MENU,
-                                              on_click=self.open_drawer
+                                            #   on_click=lambda e: asyncio.create_task(self.open_drawer())
                                               ),
                                 ft.Text("ACTIVITE ET RAPPORT ", text_align=ft.TextAlign.CENTER,
                                      size=24, weight=ft.FontWeight.BOLD),
@@ -44,21 +44,21 @@ class AcceuilView(ft.Column):
                                     ft.Row(
                                         [
                                             ft.Button(" 📋  Projets ", 
-                                                on_click=lambda e : self.page.on_route_change("/projet"), 
+                                                on_click= self.go_projet_view, 
                                                 elevation=10),
                                         ],alignment=ft.MainAxisAlignment.CENTER,
                                     ),
                                     ft.Row(
                                         [
                                             ft.Button(" Listes Entreprises ", 
-                                                on_click=lambda e: self.state.on_route_change("/list-entreprise"), 
+                                                on_click=lambda e: asyncio.create_task(self.page.push_route("/list-entreprise")), 
                                                 elevation=10),
                                         ],alignment=ft.MainAxisAlignment.CENTER,
                                     ),
                                     ft.Row(
                                         [
                                             ft.Button(" Listes Village sans forage ", 
-                                                on_click=lambda e: self.state.on_route_change("/list-village"), 
+                                                on_click=lambda e: asyncio.create_task(self.page.push_route("/list-village")), 
                                                 elevation=10),
                                         ],alignment=ft.MainAxisAlignment.CENTER,
                                     ),
@@ -76,50 +76,44 @@ class AcceuilView(ft.Column):
             )
         ]
         
-        # self.controls=[
-        #     ft.SafeArea(
-        #         ft.Stack(
-        #             expand=True,
-        #             controls=[
-        #                 ft.Container(
-        #                     content=ft.Image(
-        #                         src="eau2.png",
-        #                         expand=True
-        #                             ),
-        #                     expand=True
-        #                     ),
-        #                 ft.Container(
-        #                     content=ft.Column(
-        #                             [
-        #                                 ft.Button(" 📋  Projets ", 
-        #                                           on_click=lambda e : self.page.on_route_change("/projet"), 
-        #                                           elevation=10),
-        #                                 ft.Button(" Listes Entreprises ", 
-        #                                           on_click="", 
-        #                                           elevation=10),
-        #                             ],
-        #                             expand=True,
-        #                             alignment=ft.MainAxisAlignment.CENTER,
-        #                             # spacing=40
-        #                             # rtl=True
-        #                         ),
-        #                     align=ft.Alignment.CENTER,
-        #                     expand=True,
-        #                     top=0,bottom=0,left=0,right=0,
-        #                     bgcolor="orange"
-        #                     ),
-        #                 bar_cnt
-        #                 ]
-        #             )
-        #             ,expand=True
-        #         )
-        # ]
+    
+        
+    async def go_projet_view(self,e):
+        # await handle_change()
+        await self.page.push_route("/projet")
+        
+    async def go_apropos(self,e):
+        # await handle_change()
+        self.page.on_route_change("/apropos")
+        
+    async def handle_change(self):
+        await self.page.close_drawer()
+    
+    async def go_archive(self,e):
+        # await handle_change()
+        self.page.on_route_change('/archive')
+    
+    async def go_settings(self,e):
+        # await handle_change()
+        self.page.on_route_change('/settings')
+    
+    async def go_stats(self,e):
+        # await handle_change()
+        self.page.on_route_change('/stats')
+        
+    
 
     async def open_drawer(self):
+        self.page.drawer= page_drawer(handle_change=self.handle_change,
+                                    go_apropos=self.go_apropos,
+                                    go_archive=self.go_archive,
+                                    go_stats=self.go_stats,
+                                    go_settings=self.go_settings)
         await self.page.show_drawer()
 
-    def page_go_project(self,e):
-       self.page.on_route_change('/project')
+    # async def page_go_project(self,e):
+    #     print(e)
+    #     await self.page.push_route('/projet')
        
     def page_go_list_ouvrage(self,e):
         self.page.on_route_change('/list-ouvrage')
