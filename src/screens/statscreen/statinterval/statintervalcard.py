@@ -5,7 +5,7 @@ from .datatablestat import Mytable_ouvrage, tb_ouvrage
 
 
 # @ft.control
-class StatIntervalControl(ft.Card):
+class StatIntervalCard(ft.Card):
     def __init__(self, stats_data):
         super().__init__()
         self.elevation=5
@@ -16,7 +16,7 @@ class StatIntervalControl(ft.Card):
             scroll=ft.ScrollMode.ALWAYS)
 
         self.content=ft.Container(
-            padding=ft.padding.all(10),
+            padding=ft.Padding.all(10),
             expand=True,
             content=ft.Column(
                         [   

@@ -12,6 +12,7 @@ from myaction.myaction_main import load_all_data
 class RecapOuvrageView(ft.View):
     def __init__(self, state):
         super().__init__()
+        self.padding=0
         self.state=state
         self.route = "/projet/list-ouvrage/recap-ouvrage"
         self.projet=self.state.selected_projet
@@ -27,17 +28,9 @@ class RecapOuvrageView(ft.View):
         self.panne_cont=PanneControl(state=self.state)
 
         self.controls=[
-            ft.Container(height=5),
             ft.AppBar(
                             title=ft.Text("RECAP"), bgcolor=ft.Colors.SURFACE_BRIGHT
                         ),
-            # ft.Row(
-            #         [
-            #         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click= lambda e:self.page.on_view_pop()),
-            #         ft.Text("RECAP", text_align=ft.TextAlign.CENTER)
-            #         ]
-            #         # ,alignment=MainAxisAlignment.CENTER
-            #     ),
                 ft.Tabs(
                     length=5,
                     expand=True,

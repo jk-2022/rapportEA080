@@ -4,8 +4,7 @@ from uix.customtitlelabel import CustomTitleLabel
 from .datatablestat import Mytable_ouvrage, tb_ouvrage
 
 
-
-class StatGeneralControl(ft.Card):
+class StatGeneralCard(ft.Card):
     def __init__(self, stat_general):
         super().__init__()
         self.elevation=5

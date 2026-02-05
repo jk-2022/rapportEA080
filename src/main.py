@@ -82,28 +82,12 @@ async def main(page: ft.Page):
             page.views.append(OuvrageView(state=state))
         if page.route == "/projet/list-ouvrage/recap-ouvrage":
             page.views.append(RecapOuvrageView(state=state))
-        # if page.route == "create-ouvrage":
-        #     page.views.append(CreateOuvrageView(state=state))
-        # if page.route == "/edit-ouvrage":
-        #     page.views.append(EditOuvrageView(state=state))
-        # if page.route == "/projet/list-ouvrage/filtrer-ouvrage":
-        #     page.views.append(FiltreOuvrageView(state=state))
-        # if page.route == "/stats":
-        #     page.views.append(StatView(state=state))
-        # if page.route == "/statgeneral":
-        #     page.views.append(StatGeneralView(state=state))
-        # if page.route == "/statparprojet":
-        #     page.views.append(StatParProjetView(state=state))
-        # if page.route == "/statcommune":
-        #     page.views.append(StatCommuneView(state=state))
-        # if page.route == "/statcanton":
-        #     page.views.append(StatCantonView(state=state))
-        # if page.route == "/list-entreprise":
-        #     page.views.append(ListEntrepriseView(state=state))
-        # if page.route == "/list-village":
-        #     page.views.append(VillageView(state=state))
-        # if page.route == "/intervaldate":
-        #     page.views.append(IntervalDateView(state=state))
+        if page.route == "/stats":
+            page.views.append(StatView(state=state))
+        if page.route == "/list-entreprise":
+            page.views.append(ListEntrepriseView(state=state))
+        if page.route == "/list-village":
+            page.views.append(VillageView(state=state))
         # if page.route == "/archive":
         #     page.views.append(ArchiveView(state=state))
         # if page.route == "/apropos":

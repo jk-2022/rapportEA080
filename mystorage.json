@@ -1,7 +1,93 @@
 {
     "base_path": "C:\\Users\\hp\\Documents\\basedb",
-    "theme": "ThemeMode.DARK",
+    "theme": "ThemeMode.LIGHT",
     "archive_path": "C:\\Users\\hp\\Documents\\archives",
     "image_path": "C:\\Users\\hp\\Documents\\images",
-    "win_height": 681.0
+    "win_height": 681.0,
+    "projet": {
+        "id": 2,
+        "name": "COSO",
+        "title": "",
+        "secteurs": "",
+        "created_at": "2026-02-03 10:33:31"
+    },
+    "stats_gen": {
+        "nombre_projet": 3,
+        "nombre_commune": 6,
+        "nombre_canton": 9,
+        "total_ouvrages": 15,
+        "total_bon_etat": 15,
+        "total_panne": 0,
+        "total_abandonne": 0,
+        "par_type": {
+            "PEA": {
+                "Bon état": 8,
+                "En panne": 0,
+                "Abandonné": 0,
+                "total_ouvrage": 8
+            },
+            "PMH": {
+                "Bon état": 7,
+                "En panne": 0,
+                "Abandonné": 0,
+                "total_ouvrage": 7
+            }
+        },
+        "par_annee": {
+            "2026": {
+                "total_ouvrages": 4,
+                "total_bon_etat": 4,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    },
+                    "PMH": {
+                        "Bon état": 3,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 3
+                    }
+                }
+            },
+            "2025": {
+                "total_ouvrages": 10,
+                "total_bon_etat": 10,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 7,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 7
+                    },
+                    "PMH": {
+                        "Bon état": 3,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 3
+                    }
+                }
+            },
+            "0000": {
+                "total_ouvrages": 1,
+                "total_bon_etat": 1,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PMH": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    }
+                }
+            }
+        }
+    }
 }

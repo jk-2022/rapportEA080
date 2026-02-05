@@ -26,16 +26,6 @@ class ProjectView(ft.View):
                     ft.AppBar(
                             title=ft.Text("Projets")
                         ),
-                    ft.Container(
-                        padding=ft.Padding.only(right=20),
-                        content=ft.Row(
-                        [
-                            ft.Button("Statistiques", 
-                                      on_click=self.go_to_static, 
-                                      icon=ft.Icons.STACKED_LINE_CHART_OUTLINED)
-                        ],alignment=ft.MainAxisAlignment.END
-                    )
-                    ),
                     self.project_list
                         ],expand=True,scroll=ft.ScrollMode.ALWAYS
                     ),expand=True
@@ -67,9 +57,6 @@ class ProjectView(ft.View):
             content_padding=0
         )
         self.page.show_dialog(self.dlg_modal)
-        
-    async def go_to_static(self,e):
-        await self.page.push_route("/stats")
         
     def close_dlg(self):
         self.page.pop_dialog()

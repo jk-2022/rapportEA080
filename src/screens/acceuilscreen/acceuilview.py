@@ -50,6 +50,15 @@ class AcceuilView(ft.View):
                                     ),
                                     ft.Row(
                                         [
+                                            ft.Button("Statistiques", 
+                                                    on_click=self.go_to_static, 
+                                                    icon=ft.Icons.STACKED_LINE_CHART_OUTLINED,
+                                                    elevation=10
+                                                    )
+                                        ],alignment=ft.MainAxisAlignment.CENTER
+                                    ),
+                                    ft.Row(
+                                        [
                                             ft.Button(" Listes Entreprises ", 
                                                 on_click=lambda e: asyncio.create_task(self.page.push_route("/list-entreprise")), 
                                                 elevation=10),
@@ -81,6 +90,9 @@ class AcceuilView(ft.View):
     async def go_projet_view(self,e):
         # await handle_change()
         await self.page.push_route("/projet")
+        
+    async def go_to_static(self,e):
+        await self.page.push_route("/stats")
         
     async def go_apropos(self,e):
         # await handle_change()

@@ -5,12 +5,13 @@ from myaction.myaction_ouvrage import update_ouvrage
 from uix.custominputfield import CustomInputField
 from myaction.myaction_entreprise import create_entreprise
 
-class EditOuvrageView(ft.View):
-    def __init__(self,state):
+class EditOuvrageControl(ft.Column):
+    def __init__(self,state,formcontrol):
         super().__init__()
         self.state=state
-        self.page.route = "/edit-ouvrage"
+        self.formcontrol=formcontrol
         self.ouvrage=self.state.selected_ouvrage
+        
         self.prefecture = ft.Dropdown(
             label="Préfecture",
             value=self.ouvrage.prefecture,
@@ -29,6 +30,7 @@ class EditOuvrageView(ft.View):
             value=self.ouvrage.entreprise,
             expand=True,
             )
+        
         liste_entreprise=self.state.load_entreprises()
         if liste_entreprise:
             self.choix_entreprise.options=[]
@@ -135,44 +137,40 @@ class EditOuvrageView(ft.View):
         self.entreprise_cnt.visible=False
 
         self.controls = [
-            ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.ALWAYS,
-                spacing=10,
-                controls=[
+                    ft.AppBar(title=ft.Text("Créer un nouveau Ouvrage "),
+                              leading=ft.IconButton(icon=ft.Icons.ARROW_BACK, 
+                                              on_click= lambda e:self.formcontrol.change_content("list-ouvrage-content"))
+                              ),
+                    
                     ft.Container(
-                        content=ft.Row(
-                                [
-                                ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                                              on_click= lambda e:self.page.on_view_pop()),
-                                ft.Text("Créer un nouveau Ouvrage ", 
-                                        text_align=ft.TextAlign.CENTER)
-                                ]
-                                # ,alignment=MainAxisAlignment.CENTER
-                                    )
-                            ),
-                    ft.Row(
+                        expand=True,
+                        padding=ft.Padding.only(left=10,right=10),
+                        content=ft.Column(
+                        expand=True,
+                        scroll=ft.ScrollMode.ADAPTIVE,
+                        controls=[
+                            ft.Row(
                                 controls=[
                                     self.prefecture,
                                     self.commune,
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.canton, self.localite
-                                ]
-                            ),
+                                    ]
+                                ),
                             self.lieu,
                             ft.Row(
                                 controls=[
                                     self.coordonnee_x,self.coordonnee_y
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.type_ouvrage, self.annee
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.numero_irh, self.volume_reservoir,
@@ -181,36 +179,37 @@ class EditOuvrageView(ft.View):
                             ft.Row(
                                 controls=[
                                     self.type_reservoir, self.type_energie
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.etat
-                                ]
-                            ),
+                                    ]
+                                ),
                             self.choix_entreprise_cnt,
                             self.entreprise_cnt,
                             ft.Row(
                                 controls=[
                                     self.cause_panne
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.observation
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     ft.Button("Modifier l'ouvrage",
                                             on_click=lambda e:self.UpdadeData()
                                               )
-                                ]
-                            ),
-                        ]
+                                    ]
+                                ),
+                            ]
+                        )
                     )
-                ]
-        
+                    
+                    ]
 
     def update_commune(self,e):
         self.commune.options.clear()
@@ -285,7 +284,4 @@ class EditOuvrageView(ft.View):
         update_ouvrage(ouvrage=self.ouvrage)
         self.state.selected_ouvrage=self.ouvrage
         self.state.load_ouvrages()
-        # self.page.on_view_pop()
-        self.page.views.pop()
-        self.page.views.pop()
-        self.page.on_route_change("/list-ouvrage")     
+        self.formcontrol.change_content("list-ouvrage-content")     

@@ -2,7 +2,7 @@ import flet as ft
 from .datatablestat import Mytable_annee, tb_annee
 
 
-class StatAnneeParProjetControl(ft.Card):
+class StatAnneeCantonCard(ft.Card):
     def __init__(self, stat_general):
         super().__init__()
         self.tab_cnt_annee=ft.Column()
@@ -12,8 +12,7 @@ class StatAnneeParProjetControl(ft.Card):
         self.annee = ft.Dropdown(
             label="Voir stat par Année",
             expand=True,
-            on_text_change=lambda e: self.show_tab_stat_by_annee(e)
-            )
+            on_text_change=lambda e: self.show_tab_stat_by_annee(e))
         for key in stat_general['par_annee'].keys():
             self.annee.options.append(ft.dropdown.Option(key))
 
@@ -24,9 +23,10 @@ class StatAnneeParProjetControl(ft.Card):
                     ft.Row(
                         [
                             ft.Container(
-                        content=ft.Text(f"Statistiques par Année", 
-                                     size=11, italic=True),
-                                     alignment=ft.Alignment.CENTER
+                        content=ft.Text(f"Statistiques par Année",
+                                        size=11,
+                                        italic=True),
+                        alignment=ft.Alignment.CENTER
                         )
                         ],alignment=ft.MainAxisAlignment.CENTER
                     ),
@@ -37,8 +37,6 @@ class StatAnneeParProjetControl(ft.Card):
        
     def show_tab_stat_by_annee(self,e):
         annee=e.control.value
-        # annee=int(annee)
-        print(type(annee))
         data_annee=self.stat_general['par_annee'][annee]
         tb_annee.rows=[]
         self.tab_cnt_annee.controls.clear()
@@ -55,5 +53,4 @@ class StatAnneeParProjetControl(ft.Card):
                         )
                     )
         self.tab_cnt_annee.controls.append(Mytable_annee)
-        # self.page.update()
 

@@ -3,7 +3,7 @@ import flet as ft
 from .datatablestat import Mytable_annee, tb_annee
 
 # @ft.control
-class StatAnneeControl(ft.Card):
+class StatAnneeCard(ft.Card):
     def __init__(self,stat_general):
         super().__init__()
         self.tab_cnt_annee=ft.Column()

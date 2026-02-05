@@ -1,74 +1,40 @@
 import flet as ft
 from mystorage import *
 
-from myaction.myaction_main import get_statistiques
-from uix.statbtncard import StatBtnCard
+from .statinterval.statintervalcontrol import StatIntervalControl
+from .statcanton.statcantoncontrol import StatCantonControl
+from .statcommune.statcommunecontrol import StatCommuneControl
+from .statbuttoncontrol import StatButtonControl
+from .statgeneral.statgeneralcontrol import StatGeneralControl
+from .statprojet.statprojetcontrol import StatProjetControl
 
 class StatView(ft.View):
     def __init__(self, state):
         super().__init__()
+        self.padding=0
         self.state=state
         self.route = "/stats"
+        
         self.controls.append(
-            ft.SafeArea(
-                ft.Column(
-                    controls=[
-                        # ft.Row(
-                        #     [
-                        #     ft.IconButton(
-                        #         icon=ft.Icons.ARROW_BACK,
-                        #         on_click=lambda e :self.page.on_view_pop()
-                        #         ),
-                        #     ft.Text(f"📁 Stastistiques")
-                        #     ]
-                        # ),
-                        ft.AppBar(
-                            title=ft.Text(f"📁 Stastistiques")
-                        ),
-                        
-                        ft.Container(
-                            expand=True,
-                            align=ft.Alignment.CENTER,
-                            content=ft.Column(
-                                    [
-                                        StatBtnCard(
-                                            title='Stats générals', 
-                                            on_click=lambda e :self.page_go_general()),
-                                        StatBtnCard(
-                                            title='Stats par projet', 
-                                            on_click=lambda e :self.page_go_par_projet()),
-                                        StatBtnCard(
-                                            title='Stats communes', 
-                                            on_click=lambda e :self.page_go_commune()),
-                                        StatBtnCard(
-                                            title='Stats cantons', 
-                                            on_click=lambda e :self.page_go_canton()),
-                                        StatBtnCard(
-                                            title='Stats intervalle dates', 
-                                            on_click=lambda e :self.page_go_interval()),
-                                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
-                                )
-                        )
-                        
-                    ],
-                    expand=True,
-                    scroll=ft.ScrollMode.ALWAYS
-                )
-                ,expand=True
-            )
+            StatButtonControl(state=self.state, formcontrol=self),
+            
         )
         
+    def change_content(self, content):
+        self.controls.clear()
+        # print(content)
+        if content=="stat-button-content":
+            self.controls.append(StatButtonControl(state=self.state,formcontrol=self))
+        if content=="stat-general-content":
+            self.controls.append(StatGeneralControl(state=self.state, formcontrol=self))
+        if content=="stat-projet-content":
+            self.controls.append(StatProjetControl(state=self.state, formcontrol=self))
+        if content=="stat-commune-content":
+            self.controls.append(StatCommuneControl(state=self.state, formcontrol=self))
+        if content=="stat-canton-content":
+            self.controls.append(StatCantonControl(state=self.state, formcontrol=self))
+        if content=="stat-interval-content":
+            self.controls.append(StatIntervalControl(state=self.state, formcontrol=self))
         
-    def page_go_general(self):
-        stats_gen = get_statistiques()
-        set_value('stats_gen', stats_gen)
-        self.page.on_route_change('/statgeneral')
-    def page_go_commune(self):
-        self.page.on_route_change('/statcommune') 
-    def page_go_par_projet(self):
-        self.page.on_route_change('/statparprojet') 
-    def page_go_canton(self):
-        self.page.on_route_change('/statcanton')
-    def page_go_interval(self):
-        self.page.on_route_change('/intervaldate')
+
         

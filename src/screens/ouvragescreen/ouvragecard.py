@@ -59,7 +59,7 @@ class OuvrageCard(ft.Card):
         
     def show_edit_ouvrage(self):
         self.state.selected_ouvrage=self.ouvrage 
-        self.page.on_route_change("/edit-ouvrage")
+        self.formcontrol.formcontrol.change_content("edit-ouvrage-content")
 
     def show_delete_ouvrage(self):
         self.dlg_modal = ft.AlertDialog(

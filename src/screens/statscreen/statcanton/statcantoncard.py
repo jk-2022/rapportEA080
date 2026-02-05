@@ -3,7 +3,7 @@ import flet as ft
 from uix.customtitlelabel import CustomTitleLabel
 from .datatablestat import Mytable_ouvrage, tb_ouvrage
 
-class StatCantonControl(ft.Card):
+class StatCantonCard(ft.Card):
     def __init__(self, canton, stat_general):
         super().__init__()
         self.elevation=5

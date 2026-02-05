@@ -3,31 +3,28 @@ import os
 import csv
 
 from myaction.myaction_main import get_all_localites, get_filtered_ouvrages, recuperer_one_local, recuperer_one_projet
+from .datatable import Mytable, tb
 
 from mystorage import *
 
-
-
-from .datatable import Mytable, tb
-
-class FiltreOuvrageView(ft.View):
-    def __init__(self, state):
+class FiltreOuvrageControl(ft.Column):
+    def __init__(self,state, formcontrol):
         super().__init__()
-        self.state = state
-        self.route = "/projet/list-ouvrage/filtrer-ouvrage"
+        self.state=state
+        self.formcontrol=formcontrol
         self.liste_ouvrage_filtrer=[]
+        
         self.dropdown_type = ft.Dropdown(
-        label="Type",
-        expand=True,
-        text_size=13,
-
-        options=[ft.dropdown.Option("PMH"), 
-                 ft.dropdown.Option("PEA"), 
-                 ft.dropdown.Option("AEP"), 
-                 ft.dropdown.Option("PMH en PEA"), 
-                 ft.dropdown.Option("Mini AEP")],
-        on_text_change=lambda e: self.update_list()
-        )
+            label="Type",
+            expand=True,
+            text_size=13,
+            options=[ft.dropdown.Option("PMH"), 
+                    ft.dropdown.Option("PEA"), 
+                    ft.dropdown.Option("AEP"), 
+                    ft.dropdown.Option("PMH en PEA"), 
+                    ft.dropdown.Option("Mini AEP")],
+            on_text_change=lambda e: self.update_list()
+            )
 
         self.dropdown_etat = ft.Dropdown(
             label="État",
@@ -38,53 +35,56 @@ class FiltreOuvrageView(ft.View):
                 ft.dropdown.Option("En panne"), 
                 ft.dropdown.Option("Abandonné")],
             on_text_change=lambda e: self.update_list()
-        )
+            )
+        
         self.dropdown_localite_cnt=ft.Container(
             expand=True
-        )
+            )
+        
         self.numero_irh = ft.TextField(
             label="N° IRH", on_change=lambda e: self.update_list(),
             expand=True,
             text_size=12,
-        )
+            )
+        
         self.ouvrage_column_list = ft.Column(
             expand=1,
             scroll=ft.ScrollMode.ALWAYS
-        )
-        self.controls.append(
-            ft.SafeArea(
-                ft.Column(
-                    [
-                        # ft.Row(
-                        #     [
-                        #     ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e :self.page.on_view_pop()),
-                        #     ft.Text("Filtrer les ouvrages"),
-                        #     ]
-                        # ),
-                        ft.AppBar(
-                            title=ft.Text(f"Recherche par filtrage")
-                        ),
-                        ft.Row(
-                            [
-                            self.dropdown_type,
-                            self.dropdown_localite_cnt,
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_AROUND
-                        ),
-                        ft.Row(
-                            [
-                            self.numero_irh,
-                            self.dropdown_etat,
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_AROUND
-                        ),
-                    # Divider(),
-                    Mytable,
-                    ft.Button("Générer CSV", on_click= lambda e: self.showGenerate_csv()),
-                    ],spacing=7
-                ), expand=True
             )
-        )
+        
+        self.controls= [
+                        ft.AppBar(title=ft.Text("Créer un nouveau Ouvrage "),
+                                  leading=ft.IconButton(icon=ft.Icons.ARROW_BACK, 
+                                              on_click= lambda e: self.go_list_ouvrage_cont())
+                                  ),
+                        ft.Container(
+                            expand=True,
+                            padding=ft.Padding.only(left=10, right=10),
+                            content=ft.Column(
+                                expand=True,
+                                scroll=ft.ScrollMode.ADAPTIVE,
+                                controls=[
+                                    ft.Row(
+                                        [
+                                        self.dropdown_type,
+                                        self.dropdown_localite_cnt,
+                                        ],
+                                        alignment=ft.MainAxisAlignment.SPACE_AROUND
+                                    ),
+                                    ft.Row(
+                                        [
+                                        self.numero_irh,
+                                        self.dropdown_etat,
+                                        ],
+                                        alignment=ft.MainAxisAlignment.SPACE_AROUND
+                                    ),
+                                    Mytable,
+                                    ft.Button("Générer CSV", on_click= lambda e: self.showGenerate_csv())
+                                ]
+                            )
+                        )
+                    ]
+        
         self.update_localite()
 
     def update_localite(self):
@@ -99,6 +99,7 @@ class FiltreOuvrageView(ft.View):
             for localite in localites:
                 self.dropdown_localite.options.append(ft.dropdown.Option(localite[0]))
             self.dropdown_localite_cnt.content=self.dropdown_localite
+    
     
     def update_list(self):
         self.ouvrage_column_list.controls.clear()
@@ -180,6 +181,10 @@ class FiltreOuvrageView(ft.View):
             return True
         self.page.show_dialog(ft.SnackBar(ft.Text(f"Error for vaving {filename}"),open=True))
     
+    
+    def go_list_ouvrage_cont(self):
+        self.formcontrol.change_content("list-ouvrage-content")
+        
     def close_dlg(self):
         self.page.pop_dialog()
             

@@ -10,11 +10,13 @@ try:
 except:
     pass
 
-class CreateOuvrageView(ft.View):
-    def __init__(self, state):
+class CreateOuvrageControl(ft.Column):
+    def __init__(self, state , formcontrol):
         super().__init__()
         self.state=state
-        self.route = "/projet/list-ouvrage/create-ouvrage" 
+        self.expand=True
+        self.formcontrol=formcontrol
+        
         # self.geo = ftg.Geolocator(
         #     configuration=ftg.GeolocatorConfiguration(
         #         accuracy=ftg.GeolocatorPositionAccuracy.LOW
@@ -24,6 +26,7 @@ class CreateOuvrageView(ft.View):
         #     )
         # self.location_settings_dlg = self.get_dialog(self.handle_open_location_settings)
         # self.app_settings_dlg = self.get_dialog(self.handle_open_app_settings)
+        
         self.prefecture = ft.Dropdown(
             label="Préfecture",
             value="Oti-Sud",
@@ -127,30 +130,25 @@ class CreateOuvrageView(ft.View):
         self.entreprise_cnt.visible=False
 
         self.controls = [
-            ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.ALWAYS,
-                spacing=10,
-                controls=[
-                    # ft.Container(
-                    #     content=ft.Row(
-                    #             [
-                    #                 ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                    #                             on_click= lambda e:self.page.on_view_pop()),
-                    #                 ft.Text("Créer un nouveau Ouvrage ", 
-                    #                         text_align=ft.TextAlign.CENTER)
-                    #             ]
-                    #             # ,alignment=MainAxisAlignment.CENTER
-                    #                 )
-                    #             )
-                    ft.AppBar(title=ft.Text("Créer un nouveau ouvrage"))
-                    ,
+                    ft.AppBar(
+                        title=ft.Text("Créer un nouveau ouvrage"),
+                        leading=ft.IconButton(icon=ft.Icons.ARROW_BACK, 
+                                                on_click= lambda e:self.formcontrol.change_content("list-ouvrage-content"))
+                        
+                                ),
+                    ft.Container(
+                        expand=True,
+                        padding=ft.Padding.only(left=10,right=10),
+                        content=ft.Column(
+                        expand=True,
+                        scroll=ft.ScrollMode.ADAPTIVE,
+                        controls=[
                             ft.Row(
                                 controls=[
                                     self.prefecture,
                                     self.commune,
-                                ]
-                            ),
+                                        ]
+                                    ),
                             ft.Row(
                                 controls=[
                                     self.canton, self.localite
@@ -162,49 +160,51 @@ class CreateOuvrageView(ft.View):
                                     self.coordonnee_x,self.coordonnee_y,
                                     # ft.IconButton(icon=ft.Icons.ADD_LOCATION_ALT_OUTLINED,
                                                 #   on_click=self.handle_location_service_enabled)
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.type_ouvrage, self.annee
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.numero_irh, self.volume_reservoir,
-                                ], 
-                            ),
+                                    ], 
+                                ),
                             ft.Row(
                                 controls=[
                                     self.type_reservoir, self.type_energie
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.etat
-                                ]
-                            ),
+                                    ]
+                                ),
                             self.choix_entreprise_cnt,
                             self.entreprise_cnt,
                             ft.Row(
                                 controls=[
                                     self.cause_panne
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     self.observation
-                                ]
-                            ),
+                                    ]
+                                ),
                             ft.Row(
                                 controls=[
                                     ft.Button("Enregistrer l'ouvrage",
-                                            on_click=lambda e: self.SaveData()
-                                              )
+                                    on_click=lambda e: self.SaveData()
+                                        )
                                 ]
                             ),
                         ]
                     )
+                    )
+                    
                 ]
     
     # def get_dialog(self,handler: Callable):
@@ -341,8 +341,7 @@ class CreateOuvrageView(ft.View):
         if donnees:
             create_ouvrage(projet_id, donnees["prefecture"], donnees["commune"], donnees["canton"], donnees["localite"], donnees["lieu"], donnees["coordonnee_x"], donnees["coordonnee_y"],donnees["entreprise"], donnees["type_ouvrage"], donnees["numero_irh"], donnees["annee"], donnees["type_energie"], donnees["type_reservoir"],donnees["volume_reservoir"], donnees["etat"], donnees["cause_panne"],donnees["observation"])
             self.state.load_ouvrages()
-            self.page.views.pop()
-            self.page.views.pop()
-            self.page.on_route_change("/list-ouvrage")  
+            self.formcontrol.change_content("list-ouvrage-content")  
         else:
             return self.page.show_dialog(ft.SnackBar(ft.Text(f"⚠️ Données manquante")))
+        

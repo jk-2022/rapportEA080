@@ -3,14 +3,16 @@ import flet as ft
 import datetime
 from myaction.myaction_main import found_ouvrage_interval
 from uix.custominputfield import CustomInputField
-from .statdetailcontrol import StatDetailControl
-from .statintervalcontrol import StatIntervalControl
+from .statdetailcard import StatDetailCard
+from .statintervalcard import StatIntervalCard
 
-class IntervalDateView(ft.View):
-    def __init__(self, state):
+class StatIntervalControl(ft.Column):
+    def __init__(self, state, formcontrol):
         super().__init__()
         self.state=state
-        self.route = "/intervaldate"
+        self.formcontrol=formcontrol
+        self.expand=True
+        
         self.ouvrages_cont=ft.Column(
             expand=True, 
             scroll=ft.ScrollMode.ALWAYS)
@@ -19,6 +21,7 @@ class IntervalDateView(ft.View):
             label='Date début',
             expand=True, 
             on_click=lambda e: self.show_date1(e))
+        
         self.date2=CustomInputField(
             label='Date début',
             expand=True, 
@@ -28,6 +31,7 @@ class IntervalDateView(ft.View):
             'Afficher les resultats', 
             on_click= lambda e: self.show_result(e)
             )
+        
         self.detail_btn=ft.TextButton(
             'Voirs la liste des ouvrages',
              on_click=lambda e: self.show_list_ouvrage(e)
@@ -43,39 +47,34 @@ class IntervalDateView(ft.View):
                     on_change=self.handle_change2,
                 )
         
-        self.controls.append(
-            ft.SafeArea(
-                ft.Column(
-                    controls=[
-                        # ft.Row(
-                        #     [
-                        #     ft.IconButton(
-                        #         icon=ft.Icons.ARROW_BACK,
-                        #         on_click=lambda e: self.page.on_view_pop()
-                        #         ),
-                        #     ft.Text(f"📁 Stastistiques par Intervall de date")
-                        #     ]
-                        # ),
+        self.controls=[
                         ft.AppBar(
-                            title=ft.Text(f"📁 Stastistiques par Intervalle")
+                            title=ft.Text(f"📁 Stastistiques par Intervalle"),
+                            leading=ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK,
+                                on_click=lambda e: self.formcontrol.change_content("stat-button-content")
+                                ),
                         ),
-                        ft.Row(
-                            [
-                            self.date1,
-                            self.date2,
-                            
-                            ]
-                        ),
-                        self.btn_text,
-                        self.ouvrages_cont
+                        ft.Container(
+                            expand=True, 
+                            padding=ft.Padding(left=10, right=10),
+                            content=ft.Column(
+                                expand=True,
+                                controls=[
+                                    ft.Row(
+                                        [
+                                            self.date1,
+                                            self.date2,
+                                        
+                                            ]
+                                        ),
+                                    self.btn_text,
+                                    self.ouvrages_cont
+                                ]
+                            )
+                        )
                     
-                    ],
-                    expand=True,
-                    # scroll=ScrollMode.ALWAYS
-                )
-                ,expand=True
-            )
-        )
+                    ]
         
     def handle_change1(self, e):
         self.date1.value=e.control.value.strftime('%Y-%m-%d')
@@ -98,7 +97,7 @@ class IntervalDateView(ft.View):
         # print(self.result)
         if self.result['total_ouvrages']==0:
             return self.page.show_dialog(ft.SnackBar(ft.Text("Aucun resultat n'a été trouver")))
-        cont=StatIntervalControl(stats_data=self.result)
+        cont=StatIntervalCard(stats_data=self.result)
         self.ouvrages_cont.controls.clear()
         self.ouvrages_cont.controls.append(cont)
         self.ouvrages_cont.controls.append(self.detail_btn)
@@ -106,7 +105,7 @@ class IntervalDateView(ft.View):
         
     def show_list_ouvrage(self,e):
         stat_details=self.result['details']
-        cont=StatDetailControl(stats_data=stat_details)
+        cont=StatDetailCard(stats_data=stat_details)
         self.ouvrages_cont.controls.append(cont)
         # self.detail_btn.visible=False
         # self.detail_btn.update()

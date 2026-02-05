@@ -4,7 +4,7 @@ from .datatablestat import Mytable_detail_ouvrage, tb_detail_ouvrage
 
 
 # @ft.control
-class StatDetailControl(ft.Card):
+class StatDetailCard(ft.Card):
     def __init__(self, stats_data):
         super().__init__()
         self.elevation=5
@@ -52,4 +52,3 @@ class StatDetailControl(ft.Card):
                 ]
             )
         self.tab_cnt_general.controls.append(cont)
-        # stat_commune={}

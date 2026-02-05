@@ -3,14 +3,14 @@ import flet as ft
 from uix.customtitlelabel import CustomTitleLabel
 from .datatablestat import Mytable_ouvrage, tb_ouvrage
 
-class StatParProjetControl(ft.Card):
+class StatProjetCard(ft.Card):
     def __init__(self, par_projet, stat_general):
         super().__init__()
         self.elevation=5
         self.stat_general=stat_general
 
         self.tab_cnt_general=ft.Column(
-            expand=True, 
+            # expand=True, 
             scroll=ft.ScrollMode.ALWAYS
             )
         self.content=ft.Container(
