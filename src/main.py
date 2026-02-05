@@ -24,7 +24,7 @@ async def main(page: ft.Page):
     page.expand=True
     page.scroll = ft.ScrollMode.ADAPTIVE
     # print(page.window.height)
-    set_value("win_height",page.window.height)
+    set_value("win_height",page.height)
     
     storage_paths = ft.StoragePaths()
     

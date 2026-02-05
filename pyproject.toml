@@ -11,7 +11,7 @@ dependencies = [
     "flet>=0.80.4",
     "fpdf2",
     "python-docx",
-    "flet-geolocator==0.80.5",
+    "flet-geolocator",
     "flet-permission-handler"
 ]
 
