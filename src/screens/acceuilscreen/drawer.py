@@ -1,8 +1,6 @@
 import flet as ft 
 
-
 def page_drawer(handle_change,go_apropos,go_archive,go_stats, go_settings):
-    print("draw")
     return ft.NavigationDrawer(
             on_change=handle_change,
             controls=[
@@ -16,11 +14,10 @@ def page_drawer(handle_change,go_apropos,go_archive,go_stats, go_settings):
                     [
                         ft.Container(
                             content=ft.Column([
-                                ft.Text("text")
-                                    # ft.ListTile(title=ft.Text("A propos"),leading=ft.Icon(icon=ft.Icons.INFO), on_click= go_apropos),
-                                    # ft.ListTile(title=ft.Text("Archives"),leading=ft.Icon(icon=ft.Icons.ARCHIVE),on_click= go_archive),
-                                    # ft.ListTile(title=ft.Text("Staistiques"),leading=ft.Icon(icon=ft.Icons.STACKED_LINE_CHART_OUTLINED),on_click= go_stats),
-                                    # ft.ListTile(title=ft.Text("Paramètres"),leading=ft.Icon(icon=ft.Icons.SETTINGS),on_click= go_settings),
+                                    ft.ListTile(title=ft.Text("A propos"),leading=ft.Icon(icon=ft.Icons.INFO), on_click= go_apropos),
+                                    ft.ListTile(title=ft.Text("Archives"),leading=ft.Icon(icon=ft.Icons.ARCHIVE),on_click= go_archive),
+                                    ft.ListTile(title=ft.Text("Staistiques"),leading=ft.Icon(icon=ft.Icons.STACKED_LINE_CHART_OUTLINED),on_click= go_stats),
+                                    ft.ListTile(title=ft.Text("Paramètres"),leading=ft.Icon(icon=ft.Icons.SETTINGS),on_click= go_settings),
                                         ]
                             ),
                                 ),

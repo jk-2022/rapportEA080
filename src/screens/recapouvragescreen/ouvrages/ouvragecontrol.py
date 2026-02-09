@@ -1,31 +1,33 @@
+import asyncio
 import flet as ft
 
 from myaction.myaction_ouvrage import load_one_ouvrage
-from uix.customtitlelabel import CustomTitleLabel
+from screens.recapouvragescreen.ouvrages.onvragerecapcard import OuvrageRecapCard
+from screens.recapouvragescreen.ouvrages.optioncard import OptionCard
+from .localisationcard import LocalisationCard
 
 # @control
-class OuvrageControl(ft.Card):
+class OuvrageControl(ft.Container):
     def __init__(self, state, formcontrol):
         super().__init__()
         self.state=state
         self.formcontrol=formcontrol
-        self.cont=ft.Column( spacing=0)
+        self.ouvrage=self.state.selected_ouvrage
+        self.share=ft.Share()
+        self.copy_text=ft.Clipboard()
+        
+        self.padding=ft.Padding.only(left=10,right=10)
+        self.cont=ft.Column(spacing=10,
+                            expand=True,
+                            scroll=ft.ScrollMode.ADAPTIVE,
+                            tight=True
+                            )
 
-        self.content=ft.Container(
-            border_radius=10,
-            border=ft.Border.all(1,ft.Colors.GREEN_500),
-            content=ft.Column(
+        self.content=ft.Column(
                 [
                     self.cont,
-                    ft.Row(
-                        [
-                            ft.Button('Modifier',icon=ft.Icons.UPDATE,icon_color=ft.Colors.GREEN_500,on_click=lambda e: self.showUpdateData()),
-                            ft.Button('Partager',icon=ft.Icons.SHARE,icon_color=ft.Colors.RED,on_click=lambda e: self.shareData),
-                        ],alignment=ft.MainAxisAlignment.SPACE_EVENLY
-                    )
                 ],alignment=ft.MainAxisAlignment.CENTER
             )
-        )
 
         self.updateData()
     
@@ -33,47 +35,45 @@ class OuvrageControl(ft.Card):
         ouvrage_id=self.state.selected_ouvrage.id
         donnees=load_one_ouvrage(ouvrage_id)
         self.cont.controls.clear()
+        # print(donnees)
         if donnees:
-            list_item=['id','projet_id','ouvrage_id','created_at']
-            for key, val in donnees[0].items():
-                if key in list_item or val=="" or val==None:
-                    pass 
-                else:
-                    self.cont.controls.append(
-                        CustomTitleLabel(title=key,value=val)
-                    )
+            self.cont.controls.append(
+                LocalisationCard(donnees[0],self.copyCoords)
+            )
+            self.cont.controls.append(
+                OuvrageRecapCard(donnees[0])
+            )
+            self.cont.controls.append(
+                OptionCard(self.showUpdateData,self.shareData)
+            )
     
     def showUpdateData(self):
-        self.page.on_route_change("/edit-ouvrage")
+        self.formcontrol.formcontrol.change_content('edit-ouvrage-content')
         
+        
+    def convert_data_to_text(self):
+        datas=self.ouvrage.to_dict()
+        text_to_shared=""
+        key_data_ignored=["projet_id","id","ouvrage_id","localite","created_at","prefecture", 'Bon état', 'cause_panne','created_at',"annee"]
+        val_ignored:str|float=["","0",0.0,"0.0",0,None]
+        for key, val in datas.items():
+            if key in key_data_ignored or val in val_ignored:
+                pass 
+            else:
+                text_to_shared+=f"{key} : {val}\n"
+        return text_to_shared
 
-    def shareData(self,e):
-        self.dlg_modal = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Confirmation"),
-            content=ft.Row(
-                [
-                    ft.Text(f"Voulez-vous Partager ?")
-                ],alignment=ft.MainAxisAlignment.CENTER
-            ),
-            actions=[
-                ft.TextButton("Non", on_click=self.close_dlg),
-                ft.TextButton("Oui", on_click=self.del_ouvrage, icon=ft.Icons.DELETE, icon_color=ft.Colors.RED),
-            ],
-            actions_alignment= ft.MainAxisAlignment.END,
-            on_dismiss=lambda e: print("Modal dialog dismissed!"),
-            content_padding=0
+    async def shareData(self,e):
+        text_to_shared=self.convert_data_to_text()
+        result = await self.share.share_text(
+            text_to_shared,
+            subject="Greeting",
+            title="Share greeting",
         )
-        self.page.show_dialog(self.dlg_modal)
-        self.page.update()
-        
-    def del_ouvrage(self,e):
-        print("partage effectuer")
-        self.page.pop_dialog()
-        self.updateData()
+    
+    async def copyCoords(self):
+        datas=self.ouvrage.to_dict()
+        await self.copy_text.set(f"{datas['coordonnee_x'],datas['coordonnee_y']}")
+        return self.page.show_dialog(ft.SnackBar(ft.Text("Coordonnées copiés avec succès")))
 
-
-    def close_dlg(self, e):
-        self.page.pop_dialog()
-        # self.page.update()
 

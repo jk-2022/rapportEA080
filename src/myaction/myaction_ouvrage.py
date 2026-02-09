@@ -31,6 +31,38 @@ class Ouvrage:
     cause_panne: str
     observation: str
     created_at: str
+    def to_dict(self):
+        return {
+        "id":self.id,
+        "projet_id":self.projet_id,
+        "prefecture":self.prefecture,
+        "commune":self.commune,
+        "canton":self.canton,
+        "localite":self.localite,
+        "lieu":self.lieu,
+        "coordonnee_x":self.coordonnee_x,
+        "coordonnee_y":self.coordonnee_y,
+        "entreprise":self.entreprise,
+        "type_ouvrage":self.type_ouvrage,
+        "numero_irh":self.numero_irh,
+        "annee":self.annee,
+        "type_energie":self.type_energie,
+        "type_reservoir": self.type_reservoir,
+        "volume_reservoir": self.volume_reservoir,
+        "etat": self.etat,
+        "cause_panne": self.cause_panne,
+        "observation": self.observation,
+        }
+    def to_dict_other(self):
+        return {
+        "commune":self.commune,
+        "canton":self.canton,
+        "localite":self.localite,
+        "lieu":self.lieu,
+        "coordonnee_x":self.coordonnee_x,
+        "coordonnee_y":self.coordonnee_y,
+        "entreprise":self.entreprise,
+        }
 
 def connected_db():
     base_path=get_value("base_path")

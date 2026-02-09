@@ -41,17 +41,7 @@ class ArchiveView(ft.View):
         self.controls=[ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.Row(
-                        controls=[
-                            ft.Row(
-                                [
-                                ft.IconButton(icon=ft.Icons.ARROW_BACK,on_click=lambda e: self.page.on_view_pop()),
-                                ft.Text('Archives')
-                                ]
-                            )
-                        ],
-                        alignment=ft.MainAxisAlignment.START
-                    ),
+                    ft.AppBar(title=ft.Text("ARCHIVES")),
                     ft.Divider(),
                     self.archive_list
                         ]

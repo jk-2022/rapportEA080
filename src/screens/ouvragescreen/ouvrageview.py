@@ -1,7 +1,6 @@
 import flet as ft
 
 from .createouvragecontrol import CreateOuvrageControl
-from .editouvragecontrol import EditOuvrageControl
 from .filtreouvragecontrol import FiltreOuvrageControl
 from .listouvragecontrol import ListOuvrageControl
 
@@ -24,7 +23,5 @@ class OuvrageView(ft.View):
             self.controls.append(ListOuvrageControl(state=self.state,formcontrol=self))
         if content=="create-ouvrage-content":
             self.controls.append(CreateOuvrageControl(state=self.state,formcontrol=self))
-        if content=="edit-ouvrage-content":
-            self.controls.append(EditOuvrageControl(state=self.state,formcontrol=self))
 
 

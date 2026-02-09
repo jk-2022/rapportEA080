@@ -5,12 +5,14 @@ from myaction.myaction_ouvrage import update_ouvrage
 from uix.custominputfield import CustomInputField
 from myaction.myaction_entreprise import create_entreprise
 
-class EditOuvrageControl(ft.Column):
+class EditOuvrageControl(ft.Card):
     def __init__(self,state,formcontrol):
         super().__init__()
         self.state=state
         self.formcontrol=formcontrol
         self.ouvrage=self.state.selected_ouvrage
+        self.expand=True 
+        self.elevation=10
         
         self.prefecture = ft.Dropdown(
             label="Préfecture",
@@ -136,10 +138,15 @@ class EditOuvrageControl(ft.Column):
         )
         self.entreprise_cnt.visible=False
 
-        self.controls = [
-                    ft.AppBar(title=ft.Text("Créer un nouveau Ouvrage "),
-                              leading=ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                                              on_click= lambda e:self.formcontrol.change_content("list-ouvrage-content"))
+        self.content=ft.Column(
+            expand=True,
+            scroll=ft.ScrollMode.ADAPTIVE,
+            controls = [
+                    ft.AppBar(title=ft.Text("Modifier Ouvrage "),
+                              automatically_imply_leading=False,
+                              actions=[ft.IconButton(icon=ft.Icons.CANCEL, 
+                                              on_click= lambda e:self.formcontrol.change_content("recap-ouvrage-content")),
+                                       ]
                               ),
                     
                     ft.Container(
@@ -210,6 +217,7 @@ class EditOuvrageControl(ft.Column):
                     )
                     
                     ]
+        )
 
     def update_commune(self,e):
         self.commune.options.clear()
@@ -284,4 +292,4 @@ class EditOuvrageControl(ft.Column):
         update_ouvrage(ouvrage=self.ouvrage)
         self.state.selected_ouvrage=self.ouvrage
         self.state.load_ouvrages()
-        self.formcontrol.change_content("list-ouvrage-content")     
+        self.formcontrol.change_content("recap-ouvrage-content")     

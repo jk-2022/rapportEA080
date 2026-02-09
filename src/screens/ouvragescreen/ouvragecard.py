@@ -35,20 +35,7 @@ class OuvrageCard(ft.Card):
                                 ],spacing=0
                             )
                             ),
-                        ft.Container(
-                            content=ft.Row(
-                                        [
-                                            ft.IconButton(
-                                                icon=ft.Icons.EDIT, 
-                                                on_click=lambda e: self.show_edit_ouvrage(),
-                                                ),
-                                            ft.IconButton(
-                                                icon=ft.Icons.DELETE, 
-                                                on_click=lambda e: self.show_delete_ouvrage(),
-                                                ),
-                                        ],
-                                    )
-                        )
+                        
                     ],spacing=0
                 )
             )
@@ -57,35 +44,7 @@ class OuvrageCard(ft.Card):
         self.state.selected_ouvrage=self.ouvrage
         await self.page.push_route("/projet/list-ouvrage/recap-ouvrage")
         
-    def show_edit_ouvrage(self):
-        self.state.selected_ouvrage=self.ouvrage 
-        self.formcontrol.formcontrol.change_content("edit-ouvrage-content")
-
-    def show_delete_ouvrage(self):
-        self.dlg_modal = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Suppression"),
-            content=ft.Row(
-                [
-                    ft.Text(f"⚠️ Voulez-vous supprimer ?")
-                ],alignment=ft.MainAxisAlignment.CENTER
-            ),
-            actions=[
-                ft.TextButton("Annuler", on_click=self.close_dlg),
-                ft.TextButton("Supprimer", on_click=self.del_ouvrage),
-            ],
-            actions_alignment= ft.MainAxisAlignment.END,
-            on_dismiss=lambda e: print("Modal dialog dismissed!"),
-            content_padding=0
-        )
-        self.page.show_dialog(self.dlg_modal)
-        
     def close_dlg(self):
-        self.page.pop_dialog()
-        
-    def del_ouvrage(self):
-        delete_ouvrage(self.ouvrage.id)
-        self.formcontrol.load_ouvrages()
         self.page.pop_dialog()
         
     
