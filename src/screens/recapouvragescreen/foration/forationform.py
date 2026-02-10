@@ -13,7 +13,7 @@ class ForationForm(ft.Container):
         super().__init__()
         self.state=state
         self.ouvrage_id=self.state.selected_ouvrage.id
-        self.width=450
+        self.width=460
         self.formcontrol=formcontrol
 
         dateTime = datetime.now().strftime("%d/%m/%Y")

@@ -1,3 +1,4 @@
+import asyncio
 import flet as ft
 import os
 from datetime import datetime
@@ -55,24 +56,44 @@ class ArchiveView(ft.View):
         for file in get_exported_files():
             icon = get_icon_for_extension(file["type"])
             row = ft.ListTile(
-                    leading=ft.Icon(icon),
+                    leading=ft.IconButton(icon=ft.Icons.DELETE, 
+                                          tooltip="Supprimer", 
+                                          icon_color=ft.Colors.RED_700,
+                                          on_click=lambda e, f=file: self.delete_file(f["name"])
+                                          ),
+                    trailing=ft.IconButton(icon=ft.Icons.SHARE, 
+                                           tooltip="Partager",
+                                            icon_color=ft.Colors.BLUE_700, 
+                                           on_click=lambda e, f=file: self.share_the_file(f["name"])),
                     title=ft.Text(f"{file['name']}"),
                     subtitle=ft.Text(f"{file['date']}"),
-                    trailing=ft.IconButton(icon=ft.Icons.DELETE, tooltip="Supprimer", on_click=lambda e, f=file: self.delete_file(f["name"])),
-                    on_click=lambda e, f=file: self.open_file(f))
+                    on_click=lambda e, f=file: self.open_file(f),
+                    data=file,
+                    )
             self.archive_list.controls.append(row)
 
 
-    def open_file(self,file):
+    def open_file(self, file):
         try:
-            #android_api.ouvrir_fichier(file["name"])
             os.startfile(os.path.join(get_archive_path(), file["name"]))
         except:
             self.share.share_files(
                 [ft.ShareFile.from_path(file)],
                 text="Sharing a file from memory",
             )
-
+    def share_the_file(self, file):
+        self.file=os.path.join(get_archive_path(), file)
+        self.share_file()
+        print(self.file)
+        # return True
+        
+    async def share_file(self):
+        result = await self.share.share_files(
+            [ft.ShareFile.from_path(self.file)],
+            subject="Greeting",
+            title="Share greeting",
+        )
+        
     def delete_file(self,file_name):
         os.remove(os.path.join(get_archive_path(), file_name))
         self.load_archives()

@@ -48,7 +48,7 @@ def LocalisationCard(ouvrage,copyCoords):
                                         content=ft.Row(
                                                     expand=True,
                                                     controls=[
-                                                        ft.Text(f"Latitude : {ouvrage['coordonnee_x']} ; Longitude : {ouvrage['coordonnee_y']}"),
+                                                        ft.Text(f"Latitude : {ouvrage['coordonnee_x']} , Longitude : {ouvrage['coordonnee_y']}"),
                                                         ft.IconButton(icon=ft.Icons.COPY, on_click=copyCoords)
                                                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                                                 )

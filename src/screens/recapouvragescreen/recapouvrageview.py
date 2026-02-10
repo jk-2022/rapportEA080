@@ -14,7 +14,11 @@ class RecapOuvrageView(ft.View):
 
         self.controls=[
             ft.AppBar(
-                    title=ft.Text("RECAP"), bgcolor=ft.Colors.SURFACE_BRIGHT
+                    title=ft.Text("RECAP"), bgcolor=ft.Colors.SURFACE_BRIGHT,
+                    actions=[
+                        ft.IconButton(icon=ft.Icons.ARCHIVE,
+                                      on_click=self.page_go_archive)
+                    ]
                 ),
             self.control_content
             
@@ -30,3 +34,6 @@ class RecapOuvrageView(ft.View):
             self.control_content.controls.append(
                 RecapControl(state=self.state, formcontrol=self)
             )
+            
+    async def page_go_archive(self):
+        await self.page.push_route('/archive')

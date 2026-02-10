@@ -34,7 +34,7 @@ class AcceuilView(ft.View):
                             expand=1,
                             height=page_height-40,
                             image=ft.DecorationImage(
-                                src="icon.png",
+                                src="eau_home.png",
                                 # fit=ft.BoxFit.COVER
                                 )
                             ),

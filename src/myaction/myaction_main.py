@@ -102,11 +102,11 @@ def get_all_projets():
     return projets
 
 
-def get_all_localites():
+def get_all_localites(projet_id):
     conn = connected_db()
     try:
         c = conn.cursor()
-        c.execute(""" SELECT localite FROM ouvrages ORDER BY created_at DESC """)
+        c.execute(""" SELECT localite FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
         localites = c.fetchall()
         return localites
     except Exception as e:

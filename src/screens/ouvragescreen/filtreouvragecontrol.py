@@ -88,7 +88,7 @@ class FiltreOuvrageControl(ft.Column):
         self.update_localite()
 
     def update_localite(self):
-        localites=get_all_localites()
+        localites=get_all_localites(self.state.selected_projet.id)
         self.dropdown_localite = ft.Dropdown(
             label="Localite",
             expand=True,

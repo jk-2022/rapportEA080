@@ -7,7 +7,7 @@ class PanneForm(ft.Container):
     def __init__(self, state, formcontrol):
         super().__init__()
         self.state=state
-        self.width=450
+        self.width=460
         self.formcontrol=formcontrol
 
         dateTime = datetime.now().strftime("%d/%m/%Y")

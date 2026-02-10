@@ -11,7 +11,7 @@ class SuiviForm(ft.Container):
     def __init__(self, state, formcontrol):
         super().__init__()
         self.state=state
-        self.width=450
+        self.width=460
         self.formcontrol=formcontrol
 
         self.type_reception = ft.Dropdown(

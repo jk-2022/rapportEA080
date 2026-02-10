@@ -12,7 +12,7 @@ class SuiviUpdateForm(ft.Container):
     def __init__(self, state, suivi:Suivi, formcontrol):
         super().__init__()
         self.state=state
-        self.width=450
+        self.width=460
         self.suivi=suivi
         self.formcontrol=formcontrol
 

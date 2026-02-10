@@ -2,6 +2,7 @@ import flet as ft
 
 from myaction.myaction_main import load_all_data
 from myaction.myaction_ouvrage import delete_ouvrage
+from .genwordfinal import generer_pv_word_final
 
 from .pannes.pannecontrol import PanneControl
 from .suivi.suivicontrol import SuiviControl
@@ -60,7 +61,7 @@ class RecapControl(ft.Column):
                 ),
                 ft.Row(
                     [
-                        ft.Button("save pdf",icon=ft.Icons.PICTURE_AS_PDF, on_click= lambda e : self.show_no_make()),
+                        ft.IconButton(icon=ft.Icons.SIM_CARD_DOWNLOAD, on_click= lambda e : self.show_no_make()),
                         ft.IconButton(icon=ft.Icons.DELETE,
                                         icon_color=ft.Colors.RED_700,
                                         on_click=lambda e: self.show_delete_ouvrage()),
@@ -87,7 +88,10 @@ class RecapControl(ft.Column):
 
 
     def show_no_make(self):
-        return self.page.show_dialog(ft.SnackBar(ft.Text("option non valide pour l'instant")))
+        datas=load_all_data(self.ouvrage.id)
+        word=generer_pv_word_final(titre="text",sous_titre="text",donnees=datas)
+        if word:
+            return self.page.show_dialog(ft.SnackBar(ft.Text("Word exporter avec succès")))
     
     async def to_share_text(self):
         text_to_shared=self.covert_data_to_text()

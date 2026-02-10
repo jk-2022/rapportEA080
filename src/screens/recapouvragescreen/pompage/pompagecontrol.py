@@ -22,9 +22,11 @@ class PompageControl(ft.Container):
             )
 
         self.content=ft.Column(
-                [
+                controls=[
                     self.cont,
-                ],alignment=ft.MainAxisAlignment.CENTER
+                ],
+                expand=True,
+                alignment=ft.MainAxisAlignment.CENTER
             )
         
 
@@ -39,11 +41,23 @@ class PompageControl(ft.Container):
         if self.donnees:
             self.cont.controls.append(PompageCard(self.donnees,self.showUpdateData, self.showDelete, self.shareData))
         else:
-            self.delete_btn.visible=False
-            self.cont.controls.append(ft.Row(
-                [
-                    ft.Text("Pas de données de POMPAGE enrégistré")
-                ],alignment=ft.MainAxisAlignment.CENTER))
+            self.cont.controls.append(ft.Column(
+                controls=[
+                    ft.Row(
+                        [
+                            ft.Text("Pas de données de POMPAGE enrégistré")
+                        ],alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        [
+                            ft.Button("Inserer les données", on_click=lambda e: self.show_create_pompage())
+                        ],alignment=ft.MainAxisAlignment.CENTER
+                    )
+                ],
+                expand=True,
+                alignment=ft.MainAxisAlignment.CENTER
+                )
+            )
         
     def showUpdateData(self):
         if self.donnees==[]:
@@ -57,6 +71,22 @@ class PompageControl(ft.Container):
             actions=[
                 ft.TextButton("Annuler", on_click=self.close_dlg),
                 ft.TextButton("Sauvegarder", on_click=lambda e: cont.SaveData()),
+            ],
+            actions_alignment= ft.MainAxisAlignment.END,
+            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+            content_padding=0
+        )
+        self.page.show_dialog(self.dlg_modal)
+        
+    def show_create_pompage(self):
+        suivi_cont = PompageForm(state=self.state, formcontrol=self)
+        self.dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Pompage"),
+            content=suivi_cont,
+            actions=[
+                ft.TextButton("Annuler", on_click=lambda e: self.close_dlg()),
+                ft.TextButton("Enregistrer", on_click=lambda e: suivi_cont.SaveData()),
             ],
             actions_alignment= ft.MainAxisAlignment.END,
             on_dismiss=lambda e: print("Modal dialog dismissed!"),
@@ -120,7 +150,6 @@ class PompageControl(ft.Container):
             title="Share greeting",
         )
 
-    def close_dlg(self, e):
+    def close_dlg(self):
         self.page.pop_dialog()
-        self.page.update()
 

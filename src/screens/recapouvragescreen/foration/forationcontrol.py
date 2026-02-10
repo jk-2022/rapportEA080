@@ -37,10 +37,39 @@ class ForationControl(ft.Container):
                         ForationCard(self.donnees,self.showUpdateData,self.showDelete,self.shareData)
                     )
         else:
-            self.cont.controls.append(ft.Row(
-                [
-                    ft.Text("Pas de données de FORATION enrégistré")
-                ],alignment=ft.MainAxisAlignment.CENTER))
+            self.cont.controls.append(ft.Column(
+                controls=[
+                    ft.Row(
+                        [
+                            ft.Text("Pas de données de Foration enrégistré")
+                        ],alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        [
+                            ft.Button("Inserer les données", on_click=lambda e: self.show_create_foration())
+                        ],alignment=ft.MainAxisAlignment.CENTER
+                    )
+                ],
+                expand=True,
+                alignment=ft.MainAxisAlignment.CENTER
+                )
+            )
+            
+    def show_create_foration(self):
+        suivi_cont = ForationForm(state=self.state, formcontrol=self)
+        self.dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Foration"),
+            content=suivi_cont,
+            actions=[
+                ft.TextButton("Annuler", on_click=lambda e: self.close_dlg()),
+                ft.TextButton("Enregistrer", on_click=lambda e: suivi_cont.SaveData()),
+            ],
+            actions_alignment= ft.MainAxisAlignment.END,
+            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+            content_padding=0
+        )
+        self.page.show_dialog(self.dlg_modal)
         
 
     def showDelete(self):
@@ -64,7 +93,7 @@ class ForationControl(ft.Container):
         self.page.update()
         
     def del_foration(self):
-        rid=int(self.self.donnees[0]['id'])
+        rid=int(self.donnees[0]['id'])
         delete_foration(rid)
         self.page.pop_dialog()
         self.updateData()
@@ -110,7 +139,6 @@ class ForationControl(ft.Container):
 
     async def shareData(self,e):
         text_to_shared=self.convert_data_to_text()
-        # print(text_to_shared)
         result = await self.share.share_text(
             text_to_shared,
             subject="Greeting",

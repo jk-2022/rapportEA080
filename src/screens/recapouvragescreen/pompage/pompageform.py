@@ -14,7 +14,7 @@ class PompageForm(Container):
         super().__init__()
         self.state=state
         self.ouvrage_id=self.state.selected_ouvrage.id
-        self.width=420
+        self.width=460
         self.formcontrol=formcontrol
         
         dateTime = datetime.now().strftime("%d/%m/%Y")
@@ -99,5 +99,5 @@ class PompageForm(Container):
         donnees = self.recupererDonnees()
         create_pompage(**donnees)
         self.formcontrol.updateData()
-        self.formcontrol.close_dlg(e=None)
+        self.formcontrol.close_dlg()
         

@@ -8,7 +8,7 @@ class PanneUpdateForm(ft.Container):
     def __init__(self, state, panne: Panne, formcontrol):
         super().__init__()
         self.state=state
-        self.width=450
+        self.width=500
         self.panne=panne
         self.formcontrol=formcontrol
 

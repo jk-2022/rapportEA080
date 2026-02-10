@@ -12,7 +12,7 @@ class PompageUpdateForm(ft.Container):
     def __init__(self, state, donnees, formcontrol):
         super().__init__()
         self.state=state
-        self.width=450
+        self.width=460
         self.donnees=donnees
         self.formcontrol=formcontrol
 
