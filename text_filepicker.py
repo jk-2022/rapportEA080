@@ -1,74 +1,83 @@
+import os
+
 import flet as ft
 
-def main(page: ft.Page):
-    page.window.width = 400
-    page.window.height = 720
-    page.padding = 0
-    page.spacing = 0
 
-    # Section 1: Illustration (Haut)
-    upper_section = ft.Container(
-        expand=2,
-        bgcolor=ft.Colors.WHITE,
-        image=ft.DecorationImage(
-            src="assets/icon.png", # Remplacez par votre image
-            fit=ft.BoxFit.COVER),
-        # content=,
-        alignment=ft.Alignment.CENTER
-    )
-    
+async def main(page: ft.Page):
+    share = ft.Share()
 
-    # Section 2: Contenu Bleu (Bas)
-    # L'astuce : le fond du container parent est BLANC, mais le container lui-même est BLEU
-    # avec un arrondi uniquement en haut à gauche pour créer l'effet de l'image.
-    lower_section = ft.Container(
-        expand=3,
-        bgcolor=ft.Colors.WHITE, # Couleur de "fond" pour l'arrondi
-        content=ft.Container(
-            bgcolor="#0a1d37", # Bleu très foncé comme sur l'image
-            padding=ft.padding.all(40),
-            border_radius=ft.border_radius.only(top_left=80),
-            content=ft.Column(
-                controls=[
-                    ft.Text(
-                        "Let's connect\nwith each other",
-                        size=35,
-                        weight=ft.FontWeight.BOLD,
-                        color=ft.Colors.WHITE,
-                    ),
-                    ft.Text(
-                        "A message is a discrete communication intended by the source transmitter.",
-                        color=ft.Colors.GREY_400,
-                        size=16,
-                    ),
-                    ft.Container(expand=True), # Espace vide pour pousser le bouton vers le bas
-                    ft.ElevatedButton(
-                        content=ft.Row(
-                            [
-                                ft.Text("Let's Start", color=ft.Colors.WHITE, size=18),
-                                ft.Icon(ft.Icons.ARROW_FORWARD, color=ft.Colors.WHITE),
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
-                        bgcolor="#ff4081", # Rose/Rose vif
-                        height=60,
-                        style=ft.ButtonStyle(
-                            shape=ft.RoundedRectangleBorder(radius=15),
-                        ),
-                        on_click=lambda _: print("C'est parti !"),
-                    ),
-                ],
-                spacing=20,
-            ),
-        ),
-    )
+    status = ft.Text()
+    result_raw = ft.Text()
+
+    async def do_share_text():
+        result = await share.share_text(
+            "Hello from Flet!",
+            subject="Greeting",
+            title="Share greeting",
+        )
+        status.value = f"Share status: {result.status}"
+        result_raw.value = f"Raw: {result.raw}"
+
+    async def do_share_uri():
+        result = await share.share_uri("https://flet.dev")
+        status.value = f"Share status: {result.status}"
+        result_raw.value = f"Raw: {result.raw}"
+
+    async def do_share_files_from_bytes():
+        file = ft.ShareFile.from_bytes(
+            b"Sample content from memory",
+            mime_type="text/plain",
+            name="sample.txt",
+        )
+        result = await share.share_files(
+            [file],
+            text="Sharing a file from memory",
+        )
+        status.value = f"Share status: {result.status}"
+        result_raw.value = f"Raw: {result.raw}"
+
+    async def do_share_files_from_paths():
+        if page.web:
+            status.value = "File sharing from paths is not supported on the web."
+            return
+        #
+        temp_dir = await ft.StoragePaths().get_temporary_directory()
+        file_path = os.path.join(temp_dir, "sample_from_path.txt")
+        with open(file_path, "wb") as f:
+            f.write(b"Sample content from file path")
+
+        result = await share.share_files(
+            [ft.ShareFile.from_path(file_path)],
+            text="Sharing a file from memory",
+        )
+        status.value = f"Share status: {result.status}"
+        result_raw.value = f"Raw: {result.raw}"
 
     page.add(
-        ft.Column(
-            [upper_section, lower_section],
-            expand=True,
-            spacing=0,
+        ft.SafeArea(
+            ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Button("Share text", on_click=do_share_text),
+                            ft.Button("Share link", on_click=do_share_uri),
+                            ft.Button(
+                                "Share file from bytes",
+                                on_click=do_share_files_from_bytes,
+                            ),
+                            ft.Button(
+                                "Share file from path",
+                                on_click=do_share_files_from_paths,
+                            ),
+                        ],
+                        wrap=True,
+                    ),
+                    status,
+                    result_raw,
+                ],
+            )
         )
     )
+
 
 ft.run(main)

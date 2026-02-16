@@ -88,6 +88,7 @@ class EditOuvrageControl(ft.Card):
             value=self.ouvrage.etat,
             options=[
                     ft.dropdown.Option("Bon état"),
+                    ft.dropdown.Option("En cours"),
                     ft.dropdown.Option("En panne"),
                     ft.dropdown.Option("Abandonné")
                 ],

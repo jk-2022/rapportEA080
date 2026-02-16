@@ -29,10 +29,10 @@ async def main(page: ft.Page):
     storage_paths = ft.StoragePaths()
 
     theme=get_value('theme')
-    if theme=="ThemeMode.LIGHT":
-        theme=ft.ThemeMode.LIGHT
-    else:
+    if theme=="ThemeMode.DARK":
         theme=ft.ThemeMode.DARK
+    else:
+        theme=ft.ThemeMode.LIGHT
     if theme:
         page.theme_mode = theme
     else:

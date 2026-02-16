@@ -49,8 +49,7 @@ class OuvrageControl(ft.Container):
     
     def showUpdateData(self):
         self.formcontrol.formcontrol.change_content('edit-ouvrage-content')
-        
-        
+             
     def convert_data_to_text(self):
         datas=self.ouvrage.to_dict()
         text_to_shared=""

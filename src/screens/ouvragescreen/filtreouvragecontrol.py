@@ -1,11 +1,17 @@
+import asyncio
 import flet as ft
 import os
 import csv
 
-from myaction.myaction_main import get_all_localites, get_filtered_ouvrages, recuperer_one_local, recuperer_one_projet
+from myaction.myaction_main import get_all_localites, get_filtered_ouvrages, get_one_ouvrages, load_all_data_for_csv
+from screens.ouvragescreen.excelfilterouvrage import OuvrageExcelExporter
 from .datatable import Mytable, tb
 
 from mystorage import *
+
+def get_archive_path():
+    ARCHIVES_PATH=get_value("archive_path")
+    return ARCHIVES_PATH
 
 class FiltreOuvrageControl(ft.Column):
     def __init__(self,state, formcontrol):
@@ -32,6 +38,7 @@ class FiltreOuvrageControl(ft.Column):
             text_size=12,
             options=[
                 ft.dropdown.Option("Bon état"), 
+                ft.dropdown.Option("En cours"), 
                 ft.dropdown.Option("En panne"), 
                 ft.dropdown.Option("Abandonné")],
             on_text_change=lambda e: self.update_list()
@@ -114,24 +121,29 @@ class FiltreOuvrageControl(ft.Column):
         )
 
         if ouvrages:
-            print(ouvrages)
+            # print(ouvrages)
             tb.rows = []
             self.liste_ouvrage_filtrer=[]
             for ouvrage in ouvrages:
-                print(list(ouvrage.values()))
-                self.liste_ouvrage_filtrer.append(list(ouvrage.values()))
+                # print(list(ouvrage.values()))
+                data=load_all_data_for_csv(ouvrage["id"])
+                # print(data)
+                self.liste_ouvrage_filtrer.append(data)
                 tb.rows.append(
                     ft.DataRow(
                         cells=[
                             ft.DataCell(ft.Text(ouvrage["type_ouvrage"])),
+                            ft.DataCell(ft.Text(ouvrage["lieu"])),
+                            ft.DataCell(ft.Text(ouvrage["canton"])),
+                            ft.DataCell(ft.Text(ouvrage["commune"])),
                             ft.DataCell(ft.Text(ouvrage["numero_irh"])),
                             ft.DataCell(ft.Text(ouvrage["etat"])),
                             ft.DataCell(ft.Text(ouvrage["annee"])),
+                            ft.DataCell(ft.Text(ouvrage["coordonnee_x"])),
+                            ft.DataCell(ft.Text(ouvrage["coordonnee_y"])),
                             ft.DataCell(ft.Text(ouvrage["type_energie"])),
                             ft.DataCell(ft.Text(ouvrage["type_reservoir"])),
                             ft.DataCell(ft.Text(ouvrage["volume_reservoir"])),
-                            ft.DataCell(ft.Text(ouvrage["cause_panne"])),
-                            ft.DataCell(ft.Text(ouvrage["observation"])),
                         ],
                         data=ouvrage,
                         selected=True,
@@ -144,14 +156,12 @@ class FiltreOuvrageControl(ft.Column):
         self.page.update()
 
     def open_ouvrage_detail(self,ouvrage):
-        projet=recuperer_one_projet(ouvrage['projet_id'])
-        set_value('projet',projet[0])
-        local=recuperer_one_local(ouvrage['localisation_id'])
-        set_value('local',local[0])
-        self.page.on_route_change("/recap-ouvrage")
+        ouvrage=get_one_ouvrages(ouvrage['id'])
+        self.state.selected_ouvrage=ouvrage[0]
+        asyncio.create_task(self.page.push_route("/projet/list-ouvrage/recap-ouvrage"))
 
     def showGenerate_csv(self):
-        titlefield=ft.TextField(expand=True, height=40)
+        titlefield=ft.TextField(expand=True, height=40, value=f"liste ouvrage projet {self.state.selected_projet.name}")
         self.dlg_modal = ft.AlertDialog(
             modal=True,
             title=ft.Text("Nom du fichier"),
@@ -168,18 +178,16 @@ class FiltreOuvrageControl(ft.Column):
     def generate_csv(self, filename):
         if filename=="":
             filename="Liste ouvrages"
+        # print(filename)
+        file_path = os.path.join(get_archive_path(), filename)
         rows=self.liste_ouvrage_filtrer
-        if rows:
-            with open(f"{filename}.csv", mode="w", newline="", encoding="utf-8") as file:
-                writer = csv.writer(file, delimiter=",")
-                writer.writerow(["id","type_ouvrage", "prefecture", "commune", "canton", "localite", "numero irh", "coordonnee x", "coordonnee y",
-                "lieu implantation","Année", "type energie", "type reservoir", "Vol reservoir",
-                "etat", "cause_panne", "observation","created_at"])
-                writer.writerows(rows)
-            self.page.show_dialog(ft.SnackBar(ft.Text(f"{filename} saved successfuly"),open=True))
+        projet_name=self.state.selected_projet.name
+        out=OuvrageExcelExporter(datas=rows, output_path=file_path,projet_name=projet_name)
+        if out.export():
             self.close_dlg()
+            self.page.show_dialog(ft.SnackBar(ft.Text(f"{file_path} saved successfuly")))
             return True
-        self.page.show_dialog(ft.SnackBar(ft.Text(f"Error for vaving {filename}"),open=True))
+        self.page.show_dialog(ft.SnackBar(ft.Text(f"Error for vaving {filename}")))
     
     
     def go_list_ouvrage_cont(self):

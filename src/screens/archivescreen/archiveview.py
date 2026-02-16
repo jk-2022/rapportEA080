@@ -3,6 +3,7 @@ import flet as ft
 import os
 from datetime import datetime
 from mystorage import get_value
+from screens.archivescreen.archivecard import ArchiveCard
 
 def get_archive_path():
     ARCHIVES_PATH=get_value("archive_path")
@@ -54,22 +55,23 @@ class ArchiveView(ft.View):
     def load_archives(self):
         self.archive_list.controls.clear()
         for file in get_exported_files():
-            icon = get_icon_for_extension(file["type"])
-            row = ft.ListTile(
-                    leading=ft.IconButton(icon=ft.Icons.DELETE, 
-                                          tooltip="Supprimer", 
-                                          icon_color=ft.Colors.RED_700,
-                                          on_click=lambda e, f=file: self.delete_file(f["name"])
-                                          ),
-                    trailing=ft.IconButton(icon=ft.Icons.SHARE, 
-                                           tooltip="Partager",
-                                            icon_color=ft.Colors.BLUE_700, 
-                                           on_click=lambda e, f=file: self.share_the_file(f["name"])),
-                    title=ft.Text(f"{file['name']}"),
-                    subtitle=ft.Text(f"{file['date']}"),
-                    on_click=lambda e, f=file: self.open_file(f),
-                    data=file,
-                    )
+            # icon = get_icon_for_extension(file["type"])
+            row = ArchiveCard(file,self.delete_file,self.open_file,self)
+            # ft.ListTile(
+            #         leading=ft.IconButton(icon=ft.Icons.DELETE, 
+            #                               tooltip="Supprimer", 
+            #                               icon_color=ft.Colors.RED_700,
+            #                               on_click=lambda e, f=file: self.delete_file(f["name"])
+            #                               ),
+            #         trailing=ft.IconButton(icon=ft.Icons.SHARE, 
+            #                                tooltip="Partager",
+            #                                 icon_color=ft.Colors.BLUE_700, 
+            #                                on_click=lambda e: self.handle_share_click(e, file["name"])),
+            #         title=ft.Text(f"{file['name']}"),
+            #         subtitle=ft.Text(f"{file['date']}"),
+            #         on_click=lambda e, f=file: self.open_file(f),
+            #         data=file,
+            #         )
             self.archive_list.controls.append(row)
 
 
@@ -81,13 +83,12 @@ class ArchiveView(ft.View):
                 [ft.ShareFile.from_path(file)],
                 text="Sharing a file from memory",
             )
-    def share_the_file(self, file):
+    
+    async def handle_share_click(self, e, filename):
+        await self.share_the_file(filename)
+   
+    async def share_the_file(self, file):
         self.file=os.path.join(get_archive_path(), file)
-        self.share_file()
-        print(self.file)
-        # return True
-        
-    async def share_file(self):
         result = await self.share.share_files(
             [ft.ShareFile.from_path(self.file)],
             subject="Greeting",

@@ -7,9 +7,9 @@ from mystorage import get_value
 archive_path=get_value("archive_path")
 
 def generer_pv_word_final(
-    titre: str,
     sous_titre: str,
     donnees: dict,
+    titre: str="FICHE DE RENSEIGNEMENT DE DONNEES TECHNIQUES",
     nom_fichier: str = "proces_verbal.docx"
 ):
     """
@@ -40,8 +40,8 @@ def generer_pv_word_final(
 
     # ===== Texte juridique =====
     doc.add_paragraph(
-        "L’an deux mille vingt-six (2026), il a été procédé à la réception "
-        "provisoire des travaux conformément aux données techniques ci-dessous."
+        "Les informations enregistrées sur l’ouvrage sont représentées "
+        "dans le tableau ci-dessous : "
     )
 
     # ===== Filtrage des sections non vides =====

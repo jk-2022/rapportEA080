@@ -57,6 +57,13 @@ class AcceuilView(ft.View):
                                             ),
                                             ft.Row(
                                                 [
+                                                    ft.Button(" 📋  Archives ", 
+                                                        on_click= self.go_archives_view, 
+                                                        elevation=10),
+                                                ],alignment=ft.MainAxisAlignment.CENTER,
+                                            ),
+                                            ft.Row(
+                                                [
                                                     ft.Button("Statistiques", 
                                                             on_click=self.go_static_view, 
                                                             icon=ft.Icons.STACKED_LINE_CHART_OUTLINED,
@@ -114,6 +121,9 @@ class AcceuilView(ft.View):
     
     async def go_archive(self,e):
         await self.handle_change()
+        await self.page.push_route('/archive')
+            
+    async def go_archives_view(self,e):
         await self.page.push_route('/archive')
     
     async def go_settings(self,e):

@@ -4,6 +4,7 @@ import sqlite3
 from collections import defaultdict
 import sqlite3 
 
+from myaction.myaction_ouvrage import Ouvrage
 from mystorage import get_value 
 
 NAME_DB="rapport.db"
@@ -12,6 +13,29 @@ def connected_db():
     base_path=get_value("base_path")
     BASEDB_PATH=os.path.join(base_path,NAME_DB)
     return sqlite3.connect(BASEDB_PATH, check_same_thread=False)
+
+def load_all_data_for_csv(ouvrage_id):
+    conn = connected_db()
+    c=conn.cursor()
+    all_data={
+        'ouvrages':[],
+        'foration':[],
+        'pompage':[]
+    }
+    c.execute(f"SELECT * FROM ouvrages WHERE id=?",(ouvrage_id,))
+    rows = c.fetchall()
+    col_names = [description[0] for description in c.description]
+    data = [dict(zip(col_names, row)) for row in rows]
+    all_data["ouvrages"]=data
+    tables=['foration', 'pompage']
+    for table in tables:
+        c.execute(f"SELECT * FROM {table} WHERE ouvrage_id=?",(ouvrage_id,))
+        rows = c.fetchall()
+        col_names = [description[0] for description in c.description]
+        data = [dict(zip(col_names, row)) for row in rows]
+        data=data[0]
+        all_data[table]=data
+    return all_data
 
 def load_all_data(ouvrage_id):
     conn = connected_db()
@@ -35,16 +59,11 @@ def load_all_data(ouvrage_id):
         all_data[table]=data
     return all_data
 
-def recuperer_one_local(ouvrage_id):
-    conn = connected_db()
-    c = conn.cursor()
-    c.execute(""" SELECT * FROM ouvrages WHERE id=? """, (ouvrage_id,))
-    ouvrage = c.fetchall()
-    if ouvrage:
-        col_names = [description[0] for description in c.description]
-        data = [dict(zip(col_names, row)) for row in ouvrage]
-        return data
-    return ouvrage
+def get_one_ouvrages(ouvrage_id):
+    conn=connected_db()
+    cur=conn.cursor()
+    rows=cur.execute(" SELECT * FROM ouvrages WHERE id=? ", (ouvrage_id,)).fetchall()
+    return [Ouvrage(*row) for row in rows]
 
 def recuperer_projet_id(name):
     conn = connected_db()

@@ -2,6 +2,7 @@ import flet as ft
 
 from myaction.myaction_main import load_all_data
 from myaction.myaction_ouvrage import delete_ouvrage
+from uix.custominputfield import CustomInputField
 from .genwordfinal import generer_pv_word_final
 
 from .pannes.pannecontrol import PanneControl
@@ -61,7 +62,7 @@ class RecapControl(ft.Column):
                 ),
                 ft.Row(
                     [
-                        ft.IconButton(icon=ft.Icons.SIM_CARD_DOWNLOAD, on_click= lambda e : self.show_no_make()),
+                        ft.IconButton(icon=ft.Icons.SIM_CARD_DOWNLOAD, on_click= lambda e : self.show_word_gen()),
                         ft.IconButton(icon=ft.Icons.DELETE,
                                         icon_color=ft.Colors.RED_700,
                                         on_click=lambda e: self.show_delete_ouvrage()),
@@ -73,7 +74,7 @@ class RecapControl(ft.Column):
     def covert_data_to_text(self):
         datas=load_all_data(self.ouvrage.id)
         tex_to_shared=""
-        key_data_ignored=["projet_id","id","ouvrage_id","localite","created_at","prefecture", 'Bon état', 'cause_panne','created_at',"annee"]
+        key_data_ignored=["projet_id","id","ouvrage_id","localite","created_at","prefecture", 'Bon état', 'cause_panne','created_at',"annee", "etat"]
         val_ignored:str|float=["","0",0.0,"0.0",0,None]
         for data in datas.keys():
             if datas[data]:
@@ -87,11 +88,32 @@ class RecapControl(ft.Column):
         return tex_to_shared
 
 
-    def show_no_make(self):
+    def show_word_gen(self):
+        file_name=CustomInputField(label="saisir nom fichier",
+                                        value="Info_ouvrage",
+                                        expand=True)
+        self.dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("exportatation"),
+            content=file_name,
+            actions=[
+                ft.TextButton("Annuler", on_click=self.close_dlg),
+                ft.TextButton("Generer", on_click=lambda e :self.word_gen(file_name.value)),
+            ],
+            actions_alignment= ft.MainAxisAlignment.END,
+            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+            content_padding=0
+        )
+        self.page.show_dialog(self.dlg_modal)
+        
+    def word_gen(self,file_name):
         datas=load_all_data(self.ouvrage.id)
-        word=generer_pv_word_final(titre="text",sous_titre="text",donnees=datas)
+        sous_titre=f"Projet : {self.projet.name}\n {self.projet.title}"
+        word=generer_pv_word_final(sous_titre=sous_titre,donnees=datas,nom_fichier=file_name)
+        self.page.pop_dialog()
         if word:
             return self.page.show_dialog(ft.SnackBar(ft.Text("Word exporter avec succès")))
+    
     
     async def to_share_text(self):
         text_to_shared=self.covert_data_to_text()
@@ -100,6 +122,7 @@ class RecapControl(ft.Column):
             subject="Greeting",
             title="Share greeting",
         )
+        
     
     async def copy_data(self):
         text_to_shared=self.covert_data_to_text()
