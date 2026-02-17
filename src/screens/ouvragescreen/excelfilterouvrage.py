@@ -109,12 +109,14 @@ class OuvrageExcelExporter:
                 row_data.append(ouvrage.get(field))
 
             # Foration
-            for field in self.foration_fields:
-                row_data.append(foration.get(field))
+            if foration:
+                for field in self.foration_fields:
+                    row_data.append(foration.get(field))
 
             # Pompage
-            for field in self.pompage_fields:
-                row_data.append(pompage.get(field))
+            if pompage:
+                for field in self.pompage_fields:
+                    row_data.append(pompage.get(field))
 
             # Écriture ligne
             for col, value in enumerate(row_data, 1):

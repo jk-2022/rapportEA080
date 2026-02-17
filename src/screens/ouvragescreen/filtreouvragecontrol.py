@@ -22,6 +22,7 @@ class FiltreOuvrageControl(ft.Column):
         
         self.dropdown_type = ft.Dropdown(
             label="Type",
+            height=40,
             expand=True,
             text_size=13,
             options=[ft.dropdown.Option("PMH"), 
@@ -34,6 +35,7 @@ class FiltreOuvrageControl(ft.Column):
 
         self.dropdown_etat = ft.Dropdown(
             label="État",
+            height=40,
             expand=True,
             text_size=12,
             options=[
@@ -41,6 +43,18 @@ class FiltreOuvrageControl(ft.Column):
                 ft.dropdown.Option("En cours"), 
                 ft.dropdown.Option("En panne"), 
                 ft.dropdown.Option("Abandonné")],
+            on_text_change=lambda e: self.update_list()
+            )
+        
+        self.suivi = ft.Dropdown(
+            label="Suivi",
+            height=40,
+            expand=True,
+            text_size=12,
+            options=[
+                ft.dropdown.Option("moi"), 
+                ft.dropdown.Option("autre")
+                ],
             on_text_change=lambda e: self.update_list()
             )
         
@@ -52,6 +66,7 @@ class FiltreOuvrageControl(ft.Column):
             label="N° IRH", on_change=lambda e: self.update_list(),
             expand=True,
             text_size=12,
+            height=40
             )
         
         self.ouvrage_column_list = ft.Column(
@@ -70,6 +85,7 @@ class FiltreOuvrageControl(ft.Column):
                             content=ft.Column(
                                 expand=True,
                                 scroll=ft.ScrollMode.ADAPTIVE,
+                                spacing=5,
                                 controls=[
                                     ft.Row(
                                         [
@@ -80,13 +96,23 @@ class FiltreOuvrageControl(ft.Column):
                                     ),
                                     ft.Row(
                                         [
-                                        self.numero_irh,
+                                        self.suivi,
                                         self.dropdown_etat,
                                         ],
                                         alignment=ft.MainAxisAlignment.SPACE_AROUND
                                     ),
+                                    ft.Row(
+                                        [
+                                        self.numero_irh
+                                        ],
+                                        # alignment=ft.MainAxisAlignment.SPACE_AROUND
+                                    ),
                                     Mytable,
-                                    ft.Button("Générer CSV", on_click= lambda e: self.showGenerate_csv())
+                                    ft.Row(
+                                        [
+                                            ft.Button("Générer CSV", on_click= lambda e: self.showGenerate_csv())
+                                        ], alignment=ft.MainAxisAlignment.CENTER
+                                    )
                                 ]
                             )
                         )
@@ -98,6 +124,7 @@ class FiltreOuvrageControl(ft.Column):
         localites=get_all_localites(self.state.selected_projet.id)
         self.dropdown_localite = ft.Dropdown(
             label="Localite",
+            height=40,
             expand=True,
             text_size=12,
             on_text_change=lambda e: self.update_list()
@@ -117,17 +144,15 @@ class FiltreOuvrageControl(ft.Column):
             localite=self.dropdown_localite.value,
             etat=self.dropdown_etat.value,
             numero_irh=self.numero_irh.value,
+            suivi=self.suivi.value,
             projet_id=projet_id
         )
 
         if ouvrages:
-            # print(ouvrages)
             tb.rows = []
             self.liste_ouvrage_filtrer=[]
             for ouvrage in ouvrages:
-                # print(list(ouvrage.values()))
                 data=load_all_data_for_csv(ouvrage["id"])
-                # print(data)
                 self.liste_ouvrage_filtrer.append(data)
                 tb.rows.append(
                     ft.DataRow(

@@ -31,6 +31,7 @@ class Ouvrage:
     cause_panne: str
     observation: str
     created_at: str
+    suivi:str
     def to_dict(self):
         return {
         "id":self.id,
@@ -52,6 +53,7 @@ class Ouvrage:
         "etat": self.etat,
         "cause_panne": self.cause_panne,
         "observation": self.observation,
+        "suivi": self.suivi,
         }
     def to_dict_other(self):
         return {
@@ -62,12 +64,33 @@ class Ouvrage:
         "coordonnee_x":self.coordonnee_x,
         "coordonnee_y":self.coordonnee_y,
         "entreprise":self.entreprise,
+        "suivi":self.suivi,
         }
 
 def connected_db():
     base_path=get_value("base_path")
     BASEDB_PATH=os.path.join(base_path,NAME_DB)
     return sqlite3.connect(BASEDB_PATH, check_same_thread=False)
+
+import sqlite3
+
+async def ajouter_colonne_si_absente():
+    conn = connected_db()
+    cursor = conn.cursor()
+    # Récupérer les colonnes existantes
+    cursor.execute("PRAGMA table_info(ouvrages);")
+    colonnes = [col[1] for col in cursor.fetchall()]
+    # Vérifier si "suivi" existe
+    if "suivi" not in colonnes:
+        cursor.execute(
+            "ALTER TABLE ouvrages ADD COLUMN suivi TEXT DEFAULT 'autre';"
+        )
+        conn.commit()
+        print("Colonne 'suivi' ajoutée.")
+    else:
+        print("Colonne 'suivi' existe déjà.")
+
+    conn.close()
 
 async def init_db_ouvrage():
     conn=connected_db()
@@ -116,17 +139,17 @@ def load_one_ouvrage(ouvrage_id):
         return data
     return rows
 
-def create_ouvrage(projet_id,prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne,observation):
+def create_ouvrage(projet_id,prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne,observation,suivi):
     conn=connected_db()
     cur=conn.cursor()
-    cur.execute("INSERT INTO ouvrages(projet_id, prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne, observation) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (projet_id,prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne,observation))
+    cur.execute("INSERT INTO ouvrages(projet_id, prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne, observation,suivi) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (projet_id,prefecture, commune, canton, localite, lieu, coordonnee_x, coordonnee_y,entreprise, type_ouvrage, numero_irh, annee, type_energie, type_reservoir,volume_reservoir, etat, cause_panne,observation,suivi))
     conn.commit()
     conn.close()
 
 def update_ouvrage(ouvrage:Ouvrage):
     conn=connected_db()
     cur=conn.cursor()
-    cur.execute("UPDATE ouvrages SET projet_id=?, prefecture=?, commune=?, canton=?, localite=?, lieu=?, coordonnee_x=?, coordonnee_y=?,entreprise=?, type_ouvrage=?, numero_irh=?, annee=?, type_energie=?, type_reservoir=?,volume_reservoir=?, etat=?, cause_panne=?, observation=? WHERE id=?", (ouvrage.projet_id, ouvrage.prefecture,ouvrage.commune,ouvrage.canton,ouvrage.localite,ouvrage.lieu,ouvrage.coordonnee_x,ouvrage.coordonnee_y,ouvrage.entreprise,ouvrage.type_ouvrage,ouvrage.numero_irh,ouvrage.annee,ouvrage.type_energie,ouvrage.type_reservoir,ouvrage.volume_reservoir,ouvrage.etat,ouvrage.cause_panne, ouvrage.observation,ouvrage.id))
+    cur.execute("UPDATE ouvrages SET projet_id=?, prefecture=?, commune=?, canton=?, localite=?, lieu=?, coordonnee_x=?, coordonnee_y=?,entreprise=?, type_ouvrage=?, numero_irh=?, annee=?, type_energie=?, type_reservoir=?,volume_reservoir=?, etat=?, cause_panne=?, observation=?, suivi=? WHERE id=?", (ouvrage.projet_id, ouvrage.prefecture,ouvrage.commune,ouvrage.canton,ouvrage.localite,ouvrage.lieu,ouvrage.coordonnee_x,ouvrage.coordonnee_y,ouvrage.entreprise,ouvrage.type_ouvrage,ouvrage.numero_irh,ouvrage.annee,ouvrage.type_energie,ouvrage.type_reservoir,ouvrage.volume_reservoir,ouvrage.etat,ouvrage.cause_panne, ouvrage.observation,ouvrage.suivi, ouvrage.id))
     conn.commit()
     conn.close()
 

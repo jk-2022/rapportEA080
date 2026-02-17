@@ -33,7 +33,8 @@ def load_all_data_for_csv(ouvrage_id):
         rows = c.fetchall()
         col_names = [description[0] for description in c.description]
         data = [dict(zip(col_names, row)) for row in rows]
-        data=data[0]
+        if data:
+            data=data[0]
         all_data[table]=data
     return all_data
 
@@ -134,7 +135,8 @@ def get_all_localites(projet_id):
 def get_filtered_ouvrages(type_ouvrage=None, 
                           localite=None, 
                           etat=None, 
-                          numero_irh=None, 
+                          numero_irh=None,
+                          suivi=None, 
                           projet_id=None):
     conn = connected_db()
     cursor = conn.cursor()
@@ -154,6 +156,9 @@ def get_filtered_ouvrages(type_ouvrage=None,
     if numero_irh:
         query += " AND numero_irh = ?"
         params.append(numero_irh)
+    if suivi:
+        query += " AND suivi = ?"
+        params.append(suivi)
     if projet_id:
         query += " AND projet_id = ?"
         params.append(projet_id)
@@ -241,11 +246,10 @@ def import_json_to_sqlite(json_path: str):
                 )
 
         conn.commit()
+        conn.close()
         print(f"✅ Import réussi depuis {json_path} → ")
     except Exception as e:
         print(f"❌ Erreur d'import : {e}")
-    finally:
-        conn.close()
 
 
 def export_sqlite_to_json(file_name):

@@ -1,6 +1,6 @@
-import asyncio
 import flet as ft
 from mystorage import *
+from screens.acceuilscreen.acceuilcard import AcceuilCard
 from .drawer import page_drawer
 
 class AcceuilView(ft.View):
@@ -22,6 +22,22 @@ class AcceuilView(ft.View):
                              ],alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                             )
                          )
+        self.grid_cont=ft.Row(
+            expand=True,
+            wrap=True,
+            spacing=5,
+            # tight=True,
+            run_alignment=ft.MainAxisAlignment.END,
+            expand_loose=True,
+            controls=[
+                AcceuilCard(title="Projets",img="projet.png",change_view=self.go_projet_view),
+                AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
+                AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
+                AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
+                AcceuilCard(title="Villages sans forage",img="projet.png",change_view=self.go_village_view),
+                AcceuilCard(title="Apropos",img="apropos.png",change_view=self.go_apropos_view),
+            ]
+        )
         
         self.controls=[
             ft.SafeArea(
@@ -35,74 +51,58 @@ class AcceuilView(ft.View):
                             height=page_height-40,
                             image=ft.DecorationImage(
                                 src="eau_home.png",
-                                # fit=ft.BoxFit.COVER
                                 )
                             ),
                         ft.Container(
                             expand=3,
                             bgcolor="#0a1d37",
                             border_radius=ft.BorderRadius.only(top_left=80),
+                            alignment=ft.Alignment.CENTER,
                             content=ft.Column(
                                 expand=True,
+                                spacing=0,
                                 controls=[
-                                    
                                     ft.Column(
-                                        [
-                                            ft.Row(
-                                                [
-                                                    ft.Button(" 📋  Projets ", 
-                                                        on_click= self.go_projet_view, 
-                                                        elevation=10),
-                                                ],alignment=ft.MainAxisAlignment.CENTER,
-                                            ),
-                                            ft.Row(
-                                                [
-                                                    ft.Button(" 📋  Archives ", 
-                                                        on_click= self.go_archives_view, 
-                                                        elevation=10),
-                                                ],alignment=ft.MainAxisAlignment.CENTER,
-                                            ),
-                                            ft.Row(
-                                                [
-                                                    ft.Button("Statistiques", 
-                                                            on_click=self.go_static_view, 
-                                                            icon=ft.Icons.STACKED_LINE_CHART_OUTLINED,
-                                                            elevation=10
-                                                            )
-                                                ],alignment=ft.MainAxisAlignment.CENTER
-                                            ),
-                                            ft.Row(
-                                                [
-                                                    ft.Button(" Listes Entreprises ", 
-                                                        on_click=self.go_entreprise_view, 
-                                                        elevation=10),
-                                                ],alignment=ft.MainAxisAlignment.CENTER,
-                                            ),
-                                            ft.Row(
-                                                [
-                                                    ft.Button(" Listes Village sans forage ", 
-                                                        on_click=self.go_village_view, 
-                                                        elevation=10),
-                                                ],alignment=ft.MainAxisAlignment.CENTER,
-                                            ),
-                                            
-                                        ],
+                                        spacing=10,
                                         expand=True,
                                         alignment=ft.MainAxisAlignment.CENTER,
-                                        spacing=40
+                                        controls=[
+                                            ft.Container(
+                                             height=70,
+                                             padding=ft.Padding.only(left=40,right=20),
+                                            #  bgcolor="red",
+                                             content=ft.Row(
+                                                 expand=True,
+                                                 controls=[
+                                                     ft.Text("Un forage suivi, une communauté sécurisée",
+                                                             size=15,color=ft.Colors.WHITE, 
+                                                             weight=ft.FontWeight.BOLD,
+                                                             width=320, italic=True
+                                                             ),
+                                                     ft.IconButton(
+                                                         icon=ft.Icons.SETTINGS, 
+                                                         icon_size=30, 
+                                                         icon_color=ft.Colors.WHITE
+                                                         )
+                                                 ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                             )
+                                             ),
+                                            ft.Row(
+                                                [
+                                                    self.grid_cont
+                                                ],alignment=ft.MainAxisAlignment.CENTER
+                                                )
+                                        ]
                                         )
                                     
                                 ]
-                                # scroll=ft.ScrollMode.ADAPTIVE
                             )
                         )
                     ]
                 )
             )
         ]
-        
-    
-        
+         
     async def go_projet_view(self,e):
         await self.handle_change()
         await self.page.push_route("/projet")
@@ -112,6 +112,9 @@ class AcceuilView(ft.View):
         await self.handle_change()
         await self.page.push_route('/stats')
         
+    async def go_apropos_view(self,e):
+        await self.page.push_route("/apropos")
+                
     async def go_apropos(self,e):
         await self.handle_change()
         await self.page.push_route("/apropos")

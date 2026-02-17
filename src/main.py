@@ -3,7 +3,7 @@ import flet as ft
 from myaction.myaction_village import init_db_village
 from screens.acceuilscreen.acceuilview import AcceuilView
 from myaction.myaction_entreprise import init_db_entreprise
-from myaction.myaction_ouvrage import init_db_ouvrage
+from myaction.myaction_ouvrage import init_db_ouvrage, ajouter_colonne_si_absente
 from myaction.myaction_projet import init_db
 from myaction.myaction_pompage import init_db_pompage
 from myaction.myaction_foration import init_db_foration
@@ -63,11 +63,6 @@ async def main(page: ft.Page):
             page.views.append(ApropoView(state=state))
         if page.route == "/settings":
             page.views.append(SettingView(state=state))
-
-    # async def view_pop():
-    #     page.views.pop()
-    #     top_view = page.views.pop().route
-    #     await page.push_route(top_view)
         
     async def view_pop(e):
         if e.view is not None:
@@ -82,12 +77,8 @@ async def main(page: ft.Page):
             doc_dir = await storage_paths.get_application_documents_directory()
             return doc_dir
         else:
-            doc_dir = "/storage/emulated/0/Documents/rapea"
-            # doc_dir= await storage_paths.get_external_storage_directory()
-            # try:
-            #     doc_dir = "/storage/emulated/0/Documents/rapea"
-            # except:
-            #     doc_dir= await storage_paths.get_external_storage_directory()
+            # doc_dir = "/storage/emulated/0/Documents/rapea"
+            doc_dir= await storage_paths.get_external_storage_directory()
             return doc_dir
 
     async def base_path():
@@ -123,6 +114,7 @@ async def main(page: ft.Page):
     await init_db()
     await init_db_entreprise()
     await init_db_ouvrage()
+    await ajouter_colonne_si_absente()
     await init_db_pompage()
     await init_db_foration()
     await init_db_suivi()

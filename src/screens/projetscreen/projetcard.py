@@ -46,14 +46,19 @@ class ProjetCard(ft.Card):
                         )
                         ,expand=True
                         ),
-                    ft.Column(
+                    ft.Container(
+                        border=ft.Border.all(2,color="#153057"),
+                        border_radius=10,
+                        bgcolor="#0a1d37",
+                        content=ft.Column(
                             [
-                                ft.IconButton(icon=ft.Icons.EDIT, on_click= lambda e :self.show_edit_projet()),
-                                ft.IconButton(icon=ft.Icons.DELETE, on_click= lambda e :self.show_delete_projet()),
+                                ft.IconButton(icon=ft.Icons.EDIT,icon_color=ft.Colors.WHITE, on_click= lambda e :self.show_edit_projet()),
+                                ft.IconButton(icon=ft.Icons.DELETE,icon_color=ft.Colors.RED_700, on_click= lambda e :self.show_delete_projet()),
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             expand_loose=True
                         )
+                    )
                     ]
                 ))
         

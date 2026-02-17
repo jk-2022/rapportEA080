@@ -4,12 +4,13 @@ import flet as ft
 from myaction.myaction_ouvrage import Ouvrage, delete_ouvrage
 
 class OuvrageCard(ft.Card):
-    def __init__(self, state, ouvrage:Ouvrage, formcontrol):
+    def __init__(self, state, ouvrage:Ouvrage, selected_bool_ouvrage, formcontrol):
         super().__init__()
         self.elevation=10
         self.state=state
         self.ouvrage=ouvrage
         self.formcontrol=formcontrol
+        self.check_box=ft.Checkbox(on_change= lambda e: selected_bool_ouvrage(ouvrage),value=False)
         
         self.content=ft.Container(
             on_click=self.selectouvrage,
@@ -19,6 +20,8 @@ class OuvrageCard(ft.Card):
             expand=True,
             content=ft.Row(
                     [      
+                        self.check_box,
+                        
                         ft.Container(
                             expand=True,
                             content=ft.Column(
@@ -26,9 +29,14 @@ class OuvrageCard(ft.Card):
                                     
                                     ft.Column(
                                         [
-                                        ft.Text(f"Type : {ouvrage.type_ouvrage} / {ouvrage.etat} / {ouvrage.annee}", size=13, weight=ft.FontWeight.W_500),
+                                        ft.Row(
+                                            [
+                                                ft.Text(f"{ouvrage.type_ouvrage} / {ouvrage.etat} / {ouvrage.annee}", size=13, weight=ft.FontWeight.W_500),
+                                                ft.Text(f"{ouvrage.suivi}", color="#13335f", size=10)
+                                            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                            ),
                                         ft.Container(
-                                            content=ft.Text(f"Lieu : {ouvrage.lieu} / localité : {ouvrage.localite} / canton : {ouvrage.canton} / Commune : {ouvrage.commune}", size=12, width=340,expand=True),
+                                            content=ft.Text(f"Lieu : {ouvrage.lieu} / canton : {ouvrage.canton} / Entrep. : {ouvrage.entreprise}", size=12, width=340,expand=True),
                                             ),
                                         ],
                                     ),

@@ -1,5 +1,5 @@
 [project]
-name = "rapea"
+name = "earap"
 version = "0.1.0"
 description = ""
 readme = "README.md"
@@ -31,7 +31,7 @@ dev = [
 
 [tool.flet]
 org = "com.mycompany"
-product = "rapea"
+product = "earap"
 company = "Flet"
 copyright = "Copyright (C) 2023-2026 by Flet"
 

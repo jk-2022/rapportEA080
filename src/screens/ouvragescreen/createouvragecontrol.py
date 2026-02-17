@@ -17,15 +17,15 @@ class CreateOuvrageControl(ft.Column):
         self.expand=True
         self.formcontrol=formcontrol
         
-        # self.geo = ftg.Geolocator(
-        #     configuration=ftg.GeolocatorConfiguration(
-        #         accuracy=ftg.GeolocatorPositionAccuracy.LOW
-        #         ),
-        #     on_position_change=self.handle_position_change,
-        #     on_error=lambda e : self.show_snackbar(f"Error: {e.data}"),
-        #     )
-        # self.location_settings_dlg = self.get_dialog(self.handle_open_location_settings)
-        # self.app_settings_dlg = self.get_dialog(self.handle_open_app_settings)
+        self.geo = ftg.Geolocator(
+            configuration=ftg.GeolocatorConfiguration(
+                accuracy=ftg.GeolocatorPositionAccuracy.LOW
+                ),
+            on_position_change=self.handle_position_change,
+            on_error=lambda e : self.show_snackbar(f"Error: {e.data}"),
+            )
+        self.location_settings_dlg = self.get_dialog(self.handle_open_location_settings)
+        self.app_settings_dlg = self.get_dialog(self.handle_open_app_settings)
         
         self.prefecture = ft.Dropdown(
             label="Préfecture",
@@ -84,6 +84,17 @@ class CreateOuvrageControl(ft.Column):
                     ft.dropdown.Option("En cours"),
                     ft.dropdown.Option("En panne"),
                     ft.dropdown.Option("Abandonné")
+                ],
+            on_text_change = lambda e :self.update_field_cause(e),
+            expand=True 
+            )
+        
+        self.suivi = ft.Dropdown(
+            label="Suivi par :",
+            value="autre",
+            options=[
+                    ft.dropdown.Option("moi"),
+                    ft.dropdown.Option("autre"),
                 ],
             on_text_change = lambda e :self.update_field_cause(e),
             expand=True 
@@ -159,13 +170,13 @@ class CreateOuvrageControl(ft.Column):
                             ft.Row(
                                 controls=[
                                     self.coordonnee_x,self.coordonnee_y,
-                                    # ft.IconButton(icon=ft.Icons.ADD_LOCATION_ALT_OUTLINED,
-                                                #   on_click=self.handle_location_service_enabled)
+                                    ft.IconButton(icon=ft.Icons.ADD_LOCATION_ALT_OUTLINED,
+                                                  on_click=self.handle_location_service_enabled)
                                     ]
                                 ),
                             ft.Row(
                                 controls=[
-                                    self.type_ouvrage, self.annee
+                                    self.type_ouvrage, self.suivi 
                                     ]
                                 ),
                             ft.Row(
@@ -180,7 +191,7 @@ class CreateOuvrageControl(ft.Column):
                                 ),
                             ft.Row(
                                 controls=[
-                                    self.etat
+                                    self.annee, self.etat
                                     ]
                                 ),
                             self.choix_entreprise_cnt,
@@ -208,51 +219,54 @@ class CreateOuvrageControl(ft.Column):
                     
                 ]
     
-    # def get_dialog(self,handler: Callable):
-    #     return ft.AlertDialog(
-    #         adaptive=True,
-    #         title="Opening Location Settings...",
-    #         content=ft.Text(
-    #             "You are about to be redirected to the location/app settings. "
-    #             "Please locate this app and grant it location permissions."
-    #         ),
-    #         actions=[ft.TextButton("rediriger", on_click=handler)],
-    #         actions_alignment=ft.MainAxisAlignment.CENTER,
-    #     )
+    def get_dialog(self,handler: Callable):
+        return ft.AlertDialog(
+            adaptive=True,
+            title="Opening Location Settings...",
+            content=ft.Text(
+                "You are about to be redirected to the location/app settings. "
+                "Please locate this app and grant it location permissions."
+            ),
+            actions=[ft.TextButton("rediriger", on_click=handler)],
+            actions_alignment=ft.MainAxisAlignment.CENTER,
+        )
         
     # ==================Localisation======================
-    # def handle_position_change(self, e: ftg.GeolocatorPositionChangeEvent):
-    #     self.coordonnee_x.value=e.position.latitude
-    #     self.coordonnee_y.value=e.position.longitude
+    def handle_position_change(self, e: ftg.GeolocatorPositionChangeEvent):
+        self.coordonnee_x.value=round(e.position.latitude,6)
+        self.coordonnee_y.value=round(e.position.longitude,6)
 
-    # async def handle_get_current_position(self, e: ft.Event[ft.OutlinedButton]):
-    #     p = await self.geo.get_current_position()
-    #     self.show_snackbar(f"Current position: ({p.latitude}, {p.longitude})")
+    async def handle_get_current_position(self, e: ft.Event[ft.OutlinedButton]):
+        p = await self.geo.get_current_position()
+        self.show_snackbar(f"Current position: ({p.latitude}, {p.longitude})")
 
-    # async def handle_location_service_enabled(self, e):
-    #     try:
-    #         p = await self.geo.is_location_service_enabled()
-    #         self.show_snackbar(f"Location service enabled: {p}")
-    #         if p==False:
-    #             self.page.show_dialog(self.location_settings_dlg)
-    #     except:
-    #         pass
+    async def handle_location_service_enabled(self, e):
+        try:
+            p = await self.geo.is_location_service_enabled()
+            self.show_snackbar(f"Location service enabled: {p}")
+            if p==False:
+                self.page.show_dialog(self.location_settings_dlg)
+            else:
+                await self.handle_get_current_position
+            
+        except:
+            pass
 
-    # async def handle_open_location_settings(self, e: ft.Event[ft.OutlinedButton]):
-    #     p = await self.geo.open_location_settings()
-    #     self.page.pop_dialog()
-    #     if p is True:
-    #         self.show_snackbar("Location settings opened successfully.")
-    #     else:
-    #         self.show_snackbar("Location settings could not be opened.")
+    async def handle_open_location_settings(self, e: ft.Event[ft.OutlinedButton]):
+        p = await self.geo.open_location_settings()
+        self.page.pop_dialog()
+        if p is True:
+            self.show_snackbar("Location settings opened successfully.")
+        else:
+            self.show_snackbar("Location settings could not be opened.")
 
-    # async def handle_open_app_settings(self, e: ft.Event[ft.OutlinedButton]):
-    #     p = await self.geo.open_app_settings()
-    #     self.page.pop_dialog()
-    #     if p:
-    #         self.show_snackbar("App settings opened successfully.")
-    #     else:
-    #         self.show_snackbar("App settings could not be opened.")
+    async def handle_open_app_settings(self, e: ft.Event[ft.OutlinedButton]):
+        p = await self.geo.open_app_settings()
+        self.page.pop_dialog()
+        if p:
+            self.show_snackbar("App settings opened successfully.")
+        else:
+            self.show_snackbar("App settings could not be opened.")
     
     def show_snackbar(self, message):
         self.page.show_dialog(ft.SnackBar(ft.Text(message)))
@@ -325,6 +339,7 @@ class CreateOuvrageControl(ft.Column):
         numero_irh = self.numero_irh.value
         type_reservoir = self.type_reservoir.value
         type_energie = self.type_energie.value
+        suivi=self.suivi.value
         annee = self.annee.value
         if annee=="" or annee==None:
             return self.show_snackbar(f"⚠️ Inserer l'année")
@@ -334,13 +349,13 @@ class CreateOuvrageControl(ft.Column):
             return self.show_snackbar(f"⚠️ Choisissez l'état")
         cause_panne=self.cause_panne.value
         observation = self.observation.value
-        return {"prefecture": prefecture, "commune": commune, "canton": canton.capitalize(), "localite": localite.capitalize(),"lieu": lieu.capitalize(), "coordonnee_x": coordonnee_x, "coordonnee_y": coordonnee_y, "entreprise": choix_entreprise,"type_ouvrage": type_ouvrage,"numero_irh": numero_irh, "type_reservoir":type_reservoir,"type_energie": type_energie,"annee": annee, "volume_reservoir": volume_reservoir, "etat": etat, "cause_panne":cause_panne, "observation": observation}
+        return {"prefecture": prefecture, "commune": commune, "canton": canton.capitalize(), "localite": localite.capitalize(),"lieu": lieu.capitalize(), "coordonnee_x": coordonnee_x, "coordonnee_y": coordonnee_y, "entreprise": choix_entreprise,"type_ouvrage": type_ouvrage,"numero_irh": numero_irh, "type_reservoir":type_reservoir,"type_energie": type_energie,"annee": annee, "volume_reservoir": volume_reservoir, "etat": etat, "cause_panne":cause_panne, "observation": observation,"suivi":suivi}
 
     def SaveData(self):
         projet_id=self.state.selected_projet.id
         donnees = self.recupererDonnees()
         if donnees:
-            create_ouvrage(projet_id, donnees["prefecture"], donnees["commune"], donnees["canton"], donnees["localite"], donnees["lieu"], donnees["coordonnee_x"], donnees["coordonnee_y"],donnees["entreprise"], donnees["type_ouvrage"], donnees["numero_irh"], donnees["annee"], donnees["type_energie"], donnees["type_reservoir"],donnees["volume_reservoir"], donnees["etat"], donnees["cause_panne"],donnees["observation"])
+            create_ouvrage(projet_id, donnees["prefecture"], donnees["commune"], donnees["canton"], donnees["localite"], donnees["lieu"], donnees["coordonnee_x"], donnees["coordonnee_y"],donnees["entreprise"], donnees["type_ouvrage"], donnees["numero_irh"], donnees["annee"], donnees["type_energie"], donnees["type_reservoir"],donnees["volume_reservoir"], donnees["etat"], donnees["cause_panne"],donnees["observation"],donnees["suivi"])
             self.state.load_ouvrages()
             self.formcontrol.change_content("list-ouvrage-content")  
         else:

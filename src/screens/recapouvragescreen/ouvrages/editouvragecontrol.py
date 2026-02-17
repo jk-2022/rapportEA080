@@ -95,6 +95,17 @@ class EditOuvrageControl(ft.Card):
             on_text_change = lambda e :self.update_field_cause(e),
             expand=True 
             )
+        print(self.ouvrage.suivi)
+        self.suivi = ft.Dropdown(
+            label="Suivi par:",
+            value=self.ouvrage.suivi,
+            options=[
+                    ft.dropdown.Option("moi"),
+                    ft.dropdown.Option("autre"),
+                ],
+            on_text_change = lambda e :self.update_field_cause(e),
+            expand=True 
+            )
 
         self.numero_irh = CustomInputField(
             label="N° IRH",
@@ -176,7 +187,7 @@ class EditOuvrageControl(ft.Card):
                                 ),
                             ft.Row(
                                 controls=[
-                                    self.type_ouvrage, self.annee
+                                    self.type_ouvrage, self.suivi
                                     ]
                                 ),
                             ft.Row(
@@ -191,7 +202,7 @@ class EditOuvrageControl(ft.Card):
                                 ),
                             ft.Row(
                                 controls=[
-                                    self.etat
+                                    self.annee, self.etat
                                     ]
                                 ),
                             self.choix_entreprise_cnt,
@@ -290,6 +301,7 @@ class EditOuvrageControl(ft.Card):
         self.ouvrage.etat = self.etat.value
         self.ouvrage.cause_panne=self.cause_panne.value
         self.ouvrage.observation = self.observation.value
+        self.ouvrage.suivi=self.suivi.value
         update_ouvrage(ouvrage=self.ouvrage)
         self.state.selected_ouvrage=self.ouvrage
         self.state.load_ouvrages()
