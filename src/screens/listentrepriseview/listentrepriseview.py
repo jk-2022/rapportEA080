@@ -6,6 +6,14 @@ class ListEntrepriseView(ft.View):
         self.state=state
         self.route = "/list-entreprise"
         self.padding = 0
+        self.searsh_button = ft.Button(
+            "Filter",icon=ft.Icons.SEARCH, 
+            on_click=lambda e : self.show_maintenance()
+            )
+        self.add_button = ft.Button(
+            "Ajouter",icon=ft.Icons.ADD, 
+            on_click=lambda e :self.show_maintenance()
+            )
         self.entreprise_list_cont = ft.Column(
             expand=True,
             scroll=ft.ScrollMode.ALWAYS
@@ -18,26 +26,15 @@ class ListEntrepriseView(ft.View):
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    # ft.Container(
-                    #     content=ft.Row(
-                    #             [
-                    #             ft.IconButton(
-                    #                 icon=ft.Icons.ARROW_BACK, 
-                    #                 on_click= lambda e:self.page.on_view_pop()),
-                    #             ft.Text(
-                    #                 "Liste des entreprises ", 
-                    #                 text_align=ft.TextAlign.CENTER)
-                    #             ]
-                    #             # ,alignment=MainAxisAlignment.CENTER
-                    #         )
-                    # ),
                     ft.AppBar(
                             title=ft.Text(f"Liste des Entreprises")
                         ),
                     ft.Container(
                         content=ft.Row(
                             [
+                                self.searsh_button,
                                 self.nbre_entreprise_cnt,
+                                self.add_button
                             ],alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                         ),
                         padding=ft.Padding.only(left=10, right=10)
@@ -59,8 +56,16 @@ class ListEntrepriseView(ft.View):
         if entreprises:
             for entreprise in entreprises:
                 self.entreprise_list_cont.controls.append(
-                ft.ListTile(title=entreprise.name, subtitle=entreprise.contact, on_click="",leading=ft.Icons.PERSON_2_SHARP)
+                ft.ListTile(title=entreprise.name, 
+                            subtitle=entreprise.contact, 
+                            on_click="",
+                            leading=ft.Icons.PERSON_2_SHARP,
+                            trailing=ft.IconButton(icon=ft.Icons.CALL, on_click=self.show_maintenance)
+                            )
             )
-        
+    
+    def show_maintenance(self):
+        return self.page.show_dialog(ft.SnackBar(ft.Text("Option en maintenance")))
+    
     def close_dlg(self):
         self.page.pop_dialog()

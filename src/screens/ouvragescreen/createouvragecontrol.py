@@ -4,6 +4,7 @@ from donnees import *
 from myaction.myaction_ouvrage import create_ouvrage
 from uix.custominputfield import CustomInputField
 from myaction.myaction_entreprise import create_entreprise
+from uix.custominputnumberfield import CustomInputNumberField
 
 try:
     import flet_geolocator as ftg
@@ -100,17 +101,17 @@ class CreateOuvrageControl(ft.Column):
             expand=True 
             )
 
-        self.numero_irh = CustomInputField(label="N° IRH")
+        self.numero_irh = CustomInputNumberField(label="N° IRH")
         
         self.type_energie = CustomInputField(
             label="Type énergie"
             )
         self.type_energie.visible=False
-        self.annee = CustomInputField(
+        self.annee = CustomInputNumberField(
             label="Année d'impl.", 
             value="0000"
             )
-        self.volume_reservoir = CustomInputField(
+        self.volume_reservoir = CustomInputNumberField(
             label="Vol. réservoir"
             )
         self.volume_reservoir.visible = False

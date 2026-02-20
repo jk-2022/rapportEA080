@@ -25,9 +25,17 @@ dev = [
 
 [tool.flet.android.permission]
 "android.permission.CAMERA" = true
+"android.permission.ACCESS_FINE_LOCATION" = true
+"android.permission.ACCESS_COARSE_LOCATION" = true
+"android.permission.ACCESS_BACKGROUND_LOCATION" = true
+"android.permission.READ_MEDIA_VISUAL_USER_SELECTED" = true
+"android.permission.MANAGE_EXTERNAL_STORAGE" = true
 "android.permission.READ_EXTERNAL_STORAGE" = true
-"android.WRITE_EXTERNAL_STORAGE" = true
-"android.MANAGE_EXTERNAL_STORAGE" = true
+"android.permission.WRITE_EXTERNAL_STORAGE" = true
+
+[tool.flet.android.feature]
+"android.hardware.location.network" = false
+"android.hardware.location.gps" = false
 
 [tool.flet]
 org = "com.mycompany"

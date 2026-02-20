@@ -37,14 +37,15 @@ class ArchiveView(ft.View):
         self.share = ft.Share()
         
         self.archive_list = ft.Column(
-            expand=1
+            expand=1,
+            scroll=ft.ScrollMode.ADAPTIVE
         )
 
         self.controls=[ft.SafeArea(
             ft.Column(
                 controls=[
                     ft.AppBar(title=ft.Text("ARCHIVES")),
-                    ft.Divider(),
+                    # ft.Divider(),
                     self.archive_list
                         ]
                     ),expand=1

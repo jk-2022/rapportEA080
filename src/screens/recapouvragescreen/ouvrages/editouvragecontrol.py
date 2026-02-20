@@ -4,6 +4,7 @@ from donnees import *
 from myaction.myaction_ouvrage import update_ouvrage
 from uix.custominputfield import CustomInputField
 from myaction.myaction_entreprise import create_entreprise
+from uix.custominputnumberfield import CustomInputNumberField
 
 class EditOuvrageControl(ft.Card):
     def __init__(self,state,formcontrol):
@@ -95,7 +96,7 @@ class EditOuvrageControl(ft.Card):
             on_text_change = lambda e :self.update_field_cause(e),
             expand=True 
             )
-        print(self.ouvrage.suivi)
+        # print(self.ouvrage.suivi)
         self.suivi = ft.Dropdown(
             label="Suivi par:",
             value=self.ouvrage.suivi,
@@ -107,7 +108,7 @@ class EditOuvrageControl(ft.Card):
             expand=True 
             )
 
-        self.numero_irh = CustomInputField(
+        self.numero_irh = CustomInputNumberField(
             label="N° IRH",
             value=self.ouvrage.numero_irh)
         

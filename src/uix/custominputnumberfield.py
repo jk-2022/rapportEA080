@@ -11,6 +11,7 @@ class CustomInputNumberField(ft.TextField):
     cursor_width: int =1
     content_padding=ft.Padding.only(left=5, right=5)
     keyboard_type=ft.KeyboardType.NUMBER
+    input_filter=ft.NumbersOnlyInputFilter()
 
     def did_mount(self):
         self.on_focus=self.focus_shadow

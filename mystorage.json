@@ -10,5 +10,70 @@
         "secteurs": "",
         "created_at": "2026-02-03 10:33:31"
     },
-    "theme": "ThemeMode.LIGHT"
+    "theme": "ThemeMode.LIGHT",
+    "stats_gen": {
+        "nombre_projet": 4,
+        "nombre_commune": 6,
+        "nombre_canton": 10,
+        "total_ouvrages": 16,
+        "total_bon_etat": 16,
+        "total_panne": 0,
+        "total_abandonne": 0,
+        "par_type": {
+            "PEA": {
+                "Bon état": 9,
+                "En panne": 0,
+                "Abandonné": 0,
+                "total_ouvrage": 9
+            },
+            "PMH": {
+                "Bon état": 7,
+                "En panne": 0,
+                "Abandonné": 0,
+                "total_ouvrage": 7
+            }
+        },
+        "par_annee": {
+            "2026": {
+                "total_ouvrages": 5,
+                "total_bon_etat": 5,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 2,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 2
+                    },
+                    "PMH": {
+                        "Bon état": 3,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 3
+                    }
+                }
+            },
+            "2025": {
+                "total_ouvrages": 11,
+                "total_bon_etat": 11,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 7,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 7
+                    },
+                    "PMH": {
+                        "Bon état": 4,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 4
+                    }
+                }
+            }
+        }
+    }
 }

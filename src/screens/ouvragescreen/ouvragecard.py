@@ -32,7 +32,7 @@ class OuvrageCard(ft.Card):
                                         ft.Row(
                                             [
                                                 ft.Text(f"{ouvrage.type_ouvrage} / {ouvrage.etat} / {ouvrage.annee}", size=13, weight=ft.FontWeight.W_500),
-                                                ft.Text(f"{ouvrage.suivi}", color="#13335f", size=10)
+                                                ft.Text(f"{ouvrage.suivi}", color="#005bdb", size=10)
                                             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                                             ),
                                         ft.Container(

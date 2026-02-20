@@ -34,7 +34,7 @@ class AcceuilView(ft.View):
                 AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
                 AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
                 AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
-                AcceuilCard(title="Villages sans forage",img="projet.png",change_view=self.go_village_view),
+                AcceuilCard(title="Villages sans forage",img="village.png",change_view=self.go_village_view),
                 AcceuilCard(title="Apropos",img="apropos.png",change_view=self.go_apropos_view),
             ]
         )
@@ -69,20 +69,20 @@ class AcceuilView(ft.View):
                                         controls=[
                                             ft.Container(
                                              height=70,
-                                             padding=ft.Padding.only(left=40,right=20),
-                                            #  bgcolor="red",
+                                             padding=ft.Padding.only(left=30,right=10),
                                              content=ft.Row(
                                                  expand=True,
                                                  controls=[
                                                      ft.Text("Un forage suivi, une communauté sécurisée",
                                                              size=15,color=ft.Colors.WHITE, 
                                                              weight=ft.FontWeight.BOLD,
-                                                             width=320, italic=True
+                                                             italic=True
                                                              ),
                                                      ft.IconButton(
                                                          icon=ft.Icons.SETTINGS, 
                                                          icon_size=30, 
-                                                         icon_color=ft.Colors.WHITE
+                                                         icon_color=ft.Colors.WHITE,
+                                                         on_click=self.go_settings_view
                                                          )
                                                  ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                                              )
@@ -91,7 +91,10 @@ class AcceuilView(ft.View):
                                                 [
                                                     self.grid_cont
                                                 ],alignment=ft.MainAxisAlignment.CENTER
-                                                )
+                                                ),
+                                            ft.Container(
+                                                expand=True
+                                            )
                                         ]
                                         )
                                     
@@ -129,6 +132,9 @@ class AcceuilView(ft.View):
     async def go_archives_view(self,e):
         await self.page.push_route('/archive')
     
+    async def go_settings_view(self,e):
+        await self.page.push_route('/settings')   
+         
     async def go_settings(self,e):
         await self.handle_change()
         await self.page.push_route('/settings')

@@ -1,7 +1,6 @@
 # import asyncio
 import flet as ft
 from myaction.myaction_village import init_db_village
-from screens.acceuilscreen.acceuilview import AcceuilView
 from myaction.myaction_entreprise import init_db_entreprise
 from myaction.myaction_ouvrage import init_db_ouvrage, ajouter_colonne_si_absente
 from myaction.myaction_projet import init_db

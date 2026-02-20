@@ -26,7 +26,9 @@ class PompageForm(Container):
         self.debit_pompage = CustomInputNumberField(label="Débit pompage.")
         self.niv_dynamique = CustomInputNumberField(label="Niv Statique")
         self.niv_statique = CustomInputNumberField(label="Niv Dynamique.")
-        self.observation = CustomInputField(label="Observation",height=80, max_lines=4, multiline=True)
+        self.observation = CustomInputField(label="Observation",height=80, 
+                                            max_lines=4, 
+                                            multiline=True)
     
         self.content=Container(
                 padding=15,

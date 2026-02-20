@@ -22,7 +22,7 @@ def ArchiveCard(file,delete_file,open_file,formcontrol):
             title="Share greeting",
         )
 
-        print("Share status:", result.status)
+        # print("Share status:", result.status)
     return ft.ListTile(
                     leading=ft.IconButton(icon=ft.Icons.DELETE, 
                                           tooltip="Supprimer", 

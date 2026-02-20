@@ -23,27 +23,11 @@ class VillageView(ft.View):
             expand=True,
             scroll=ft.ScrollMode.ALWAYS
         )
-        self.nbre_village_cnt=ft.Row(
-                                    [
-                                    ],alignment=ft.MainAxisAlignment.CENTER
-                                )
+        self.nbre_village_cnt=ft.Text()
 
         self.controls.append(ft.SafeArea(
             ft.Column(
                 controls=[
-                    # ft.Container(
-                    #     content=ft.Row(
-                    #             [
-                    #             ft.IconButton(
-                    #                 icon=ft.Icons.ARROW_BACK, 
-                    #                 on_click= lambda e:self.page.on_view_pop()),
-                    #             ft.Text(
-                    #                 "Liste des villages ", 
-                    #                 text_align=ft.TextAlign.CENTER)
-                    #             ]
-                    #             # ,alignment=MainAxisAlignment.CENTER
-                    #         )
-                    # ),
                     ft.AppBar(
                             title=ft.Text(f"Liste des Villages")
                         ),
@@ -70,7 +54,7 @@ class VillageView(ft.View):
     def load_village(self):
         villages=self.state.load_villages()
         nbre_village=len(villages)
-        self.nbre_village_cnt.controls.append(ft.Text(f"Total : {nbre_village}", size=12))
+        self.nbre_village_cnt.value=f"Total : {nbre_village}"
         self.village_list_cont.controls.clear()
         if villages:
             for village in villages:
@@ -78,7 +62,7 @@ class VillageView(ft.View):
                 ft.ListTile(title=f"villlage : {village.localite}", 
                             subtitle=f"{village.canton}/{village.commune}",
                             data=village,
-                            on_click="",
+                            on_click=self.go_filter_page,
                             leading=ft.IconButton(icon=ft.Icons.DELETE, 
                                                    icon_color=ft.Colors.RED_700,
                                                    on_click= lambda e, data=village.id: self.show_delete_village(data)

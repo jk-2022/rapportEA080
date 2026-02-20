@@ -19,6 +19,7 @@ class StatButtonControl(ft.Column):
             ft.Container(
                 expand=True,
                 align=ft.Alignment.CENTER,
+                padding=ft.Padding.only(left=10,right=10),
                 content=ft.Column(
                         controls=[
                             StatBtnCard(
@@ -36,7 +37,8 @@ class StatButtonControl(ft.Column):
                             StatBtnCard(
                                 title='Stats intervalle dates', 
                                 on_click=lambda e :self.change_content_form("stat-interval-content")),
-                        ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                        ], 
+                        # alignment=ft.MainAxisAlignment.SPACE_EVENLY
                     )
                 )
                         
