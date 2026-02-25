@@ -14,6 +14,17 @@ def connected_db():
     BASEDB_PATH=os.path.join(base_path,NAME_DB)
     return sqlite3.connect(BASEDB_PATH, check_same_thread=False)
 
+async def reset_my_db():
+    conn=connected_db()
+    cur=conn.cursor()
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+    tables = cur.fetchall()
+    for table in tables:
+        cur.execute(f"DROP TABLE IF EXISTS {table[0]}")
+    conn.commit()
+    conn.close()
+    # return True
+
 def load_all_data_for_csv(ouvrage_id):
     conn = connected_db()
     c=conn.cursor()
@@ -126,7 +137,7 @@ def get_all_localites(projet_id):
     conn = connected_db()
     try:
         c = conn.cursor()
-        c.execute(""" SELECT localite FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
+        c.execute(""" SELECT DISTINCT localite FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
         localites = c.fetchall()
         return localites
     except Exception as e:
@@ -545,6 +556,7 @@ def get_stats_canton(nom_canton):
         "total_ouvrages": 0,
         "total_bon_etat": 0,
         "total_panne": 0,
+        "total_en_cours": 0,
         "total_abandonne": 0,
 
         "par_type": {},
@@ -584,6 +596,8 @@ def get_stats_canton(nom_canton):
 
         if etat == "Bon état":
             stats["total_bon_etat"] += count
+        if etat == "En cours":
+            stats["total_en_cours"] += count
         elif etat == "En panne":
             stats["total_panne"] += count
         elif etat == "Abandonné":
@@ -593,6 +607,7 @@ def get_stats_canton(nom_canton):
         if type_o not in stats["par_type"]:
             stats["par_type"][type_o] = {
                 "Bon état": 0,
+                "En cours": 0,
                 "En panne": 0,
                 "Abandonné": 0,
                 "total_ouvrage": 0
@@ -607,6 +622,7 @@ def get_stats_canton(nom_canton):
                 "total_ouvrages": 0,
                 "total_bon_etat": 0,
                 "total_panne": 0,
+                "total_en_cours": 0,
                 "total_abandonne": 0,
                 "par_type": {}
             }
@@ -616,6 +632,8 @@ def get_stats_canton(nom_canton):
             stats["par_annee"][annee]["total_bon_etat"] += count
         elif etat == "En panne":
             stats["par_annee"][annee]["total_panne"] += count
+        elif etat == "En cours":
+            stats["par_annee"][annee]["total_en_cours"] += count
         elif etat == "Abandonné":
             stats["par_annee"][annee]["total_abandonne"] += count
 
@@ -624,6 +642,7 @@ def get_stats_canton(nom_canton):
             stats["par_annee"][annee]["par_type"][type_o] = {
                 "Bon état": 0,
                 "En panne": 0,
+                "En cours": 0,
                 "Abandonné": 0,
                 "total_ouvrage": 0
             }

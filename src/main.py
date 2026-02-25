@@ -116,9 +116,9 @@ async def main(page: ft.Page):
     await ajouter_colonne_si_absente()
     await init_db_pompage()
     await init_db_foration()
-    await init_db_suivi()
     await init_db_panne()
     await init_db_village()
+    await init_db_suivi()
 
     page.on_route_change=route_change
     page.on_view_pop= view_pop

@@ -1,6 +1,15 @@
 import flet as ft
-from myaction.myaction_main import export_sqlite_to_json, import_json_to_sqlite
+from myaction.myaction_main import export_sqlite_to_json, import_json_to_sqlite, reset_my_db
 from mystorage import *
+
+from myaction.myaction_village import init_db_village
+from myaction.myaction_entreprise import init_db_entreprise
+from myaction.myaction_ouvrage import init_db_ouvrage, ajouter_colonne_si_absente
+from myaction.myaction_projet import init_db
+from myaction.myaction_pompage import init_db_pompage
+from myaction.myaction_foration import init_db_foration
+from myaction.myaction_suivi import init_db_suivi
+from myaction.myaction_panne import init_db_panne
 
 class SettingView(ft.View):
     def __init__(self,state):
@@ -52,7 +61,8 @@ class SettingView(ft.View):
                             ),
                             padding=ft.Padding.only(left=10,right=20)
                         )
-                    )
+                    ),
+                    ft.ListTile(title=ft.Text("Réinitialiser la base de donnée", color="#0b67e7"),leading=ft.Icon(ft.Icons.RESTORE), on_click=lambda e: self.show_reset())
                 ],expand=True,spacing=0
             ),expand=True
         )
@@ -80,6 +90,42 @@ class SettingView(ft.View):
             on_dismiss=lambda e: print("Modal dialog dismissed!"),
         )
         self.page.show_dialog(self.dlg_modal)
+    
+    def show_reset(self):
+        self.dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Row(
+                [
+                    ft.Text("reinitialiser", size=12)
+                ],alignment=ft.MainAxisAlignment.CENTER
+                ),
+            content=ft.Row(
+                [
+                    ft.Text("Voulez-vous réinitialiser votre application")
+                ],alignment=ft.MainAxisAlignment.CENTER
+                ),
+            actions=[
+                ft.TextButton("Annuler", on_click=self.close_dlg),
+                ft.TextButton("Oui", on_click = self.reset_db),
+            ],
+            actions_alignment= ft.MainAxisAlignment.END,
+            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+        )
+        self.page.show_dialog(self.dlg_modal)
+        
+    async def reset_db(self):
+        await reset_my_db()
+        await init_db()
+        await init_db_entreprise()
+        await init_db_ouvrage()
+        await ajouter_colonne_si_absente()
+        await init_db_pompage()
+        await init_db_foration()
+        await init_db_panne()
+        await init_db_village()
+        await init_db_suivi()
+        self.page.pop_dialog()
+        self.page.show_dialog(ft.SnackBar(ft.Text("Vous avez réinitialiser votre application avec succès")))
 
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
         files = await ft.FilePicker().pick_files(allowed_extensions=["json"])

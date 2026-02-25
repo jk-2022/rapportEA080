@@ -120,5 +120,5 @@ class PompageUpdateForm(ft.Container):
             )
         update_pompage(pompage=pompage)
         self.formcontrol.updateData()
-        self.formcontrol.close_dlg(e=None)
+        self.page.pop_dialog()
 

@@ -12,65 +12,189 @@
     },
     "theme": "ThemeMode.LIGHT",
     "stats_gen": {
-        "nombre_projet": 4,
+        "nombre_projet": 6,
         "nombre_commune": 6,
         "nombre_canton": 10,
-        "total_ouvrages": 16,
-        "total_bon_etat": 16,
-        "total_panne": 0,
-        "total_abandonne": 0,
+        "total_ouvrages": 51,
+        "total_bon_etat": 42,
+        "total_panne": 3,
+        "total_abandonne": 5,
         "par_type": {
             "PEA": {
-                "Bon état": 9,
+                "Bon état": 22,
                 "En panne": 0,
                 "Abandonné": 0,
-                "total_ouvrage": 9
+                "total_ouvrage": 23,
+                "En cours": 1
             },
             "PMH": {
-                "Bon état": 7,
+                "Bon état": 20,
+                "En panne": 3,
+                "Abandonné": 4,
+                "total_ouvrage": 27
+            },
+            "PMH en PEA": {
+                "Bon état": 0,
                 "En panne": 0,
-                "Abandonné": 0,
-                "total_ouvrage": 7
+                "Abandonné": 1,
+                "total_ouvrage": 1
             }
         },
         "par_annee": {
             "2026": {
-                "total_ouvrages": 5,
-                "total_bon_etat": 5,
-                "total_panne": 0,
-                "total_abandonne": 0,
-                "par_type": {
-                    "PEA": {
-                        "Bon état": 2,
-                        "En panne": 0,
-                        "Abandonné": 0,
-                        "total_ouvrage": 2
-                    },
-                    "PMH": {
-                        "Bon état": 3,
-                        "En panne": 0,
-                        "Abandonné": 0,
-                        "total_ouvrage": 3
-                    }
-                }
-            },
-            "2025": {
                 "total_ouvrages": 11,
-                "total_bon_etat": 11,
+                "total_bon_etat": 10,
                 "total_panne": 0,
                 "total_abandonne": 0,
                 "par_type": {
                     "PEA": {
-                        "Bon état": 7,
+                        "Bon état": 6,
                         "En panne": 0,
                         "Abandonné": 0,
-                        "total_ouvrage": 7
+                        "total_ouvrage": 7,
+                        "En cours": 1
                     },
                     "PMH": {
                         "Bon état": 4,
                         "En panne": 0,
                         "Abandonné": 0,
                         "total_ouvrage": 4
+                    }
+                }
+            },
+            "2025": {
+                "total_ouvrages": 13,
+                "total_bon_etat": 13,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 9,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 9
+                    },
+                    "PMH": {
+                        "Bon état": 4,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 4
+                    }
+                }
+            },
+            "2024": {
+                "total_ouvrages": 1,
+                "total_bon_etat": 1,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    }
+                }
+            },
+            "2023": {
+                "total_ouvrages": 2,
+                "total_bon_etat": 1,
+                "total_panne": 1,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    },
+                    "PMH": {
+                        "Bon état": 0,
+                        "En panne": 1,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    }
+                }
+            },
+            "2022": {
+                "total_ouvrages": 2,
+                "total_bon_etat": 2,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PMH": {
+                        "Bon état": 2,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 2
+                    }
+                }
+            },
+            "2021": {
+                "total_ouvrages": 1,
+                "total_bon_etat": 1,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    }
+                }
+            },
+            "2020": {
+                "total_ouvrages": 1,
+                "total_bon_etat": 1,
+                "total_panne": 0,
+                "total_abandonne": 0,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    }
+                }
+            },
+            "2018": {
+                "total_ouvrages": 2,
+                "total_bon_etat": 1,
+                "total_panne": 0,
+                "total_abandonne": 1,
+                "par_type": {
+                    "PMH": {
+                        "Bon état": 1,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 1
+                    },
+                    "PMH en PEA": {
+                        "Bon état": 0,
+                        "En panne": 0,
+                        "Abandonné": 1,
+                        "total_ouvrage": 1
+                    }
+                }
+            },
+            "0000": {
+                "total_ouvrages": 18,
+                "total_bon_etat": 12,
+                "total_panne": 2,
+                "total_abandonne": 4,
+                "par_type": {
+                    "PEA": {
+                        "Bon état": 3,
+                        "En panne": 0,
+                        "Abandonné": 0,
+                        "total_ouvrage": 3
+                    },
+                    "PMH": {
+                        "Bon état": 9,
+                        "En panne": 2,
+                        "Abandonné": 4,
+                        "total_ouvrage": 15
                     }
                 }
             }
