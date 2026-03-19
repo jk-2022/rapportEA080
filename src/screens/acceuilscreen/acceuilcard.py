@@ -1,6 +1,5 @@
 import flet as ft
 
-
 class AcceuilCard(ft.Card):
     def __init__(self, title, img, change_view):
         super().__init__()

@@ -26,7 +26,6 @@ class AcceuilView(ft.View):
             expand=True,
             wrap=True,
             spacing=5,
-            # tight=True,
             run_alignment=ft.MainAxisAlignment.END,
             expand_loose=True,
             controls=[

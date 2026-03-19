@@ -1,80 +1,90 @@
+from dataclasses import dataclass
+
 import flet as ft
+import flet.canvas as cv
+
+MAX_SHAPES_PER_CAPTURE = 30
 
 
-async def main(page: ft.Page):
-    url_launcher = ft.UrlLauncher()
+@dataclass
+class State:
+    x: float = 0
+    y: float = 0
+    shapes_count: int = 1
 
-    url = ft.TextField(label="URL to open", value="https://flet.dev", expand=True)
-    status = ft.Text()
 
-    async def can_launch():
-        can = await url_launcher.can_launch_url(url.value)
-        status.value = f"Can launch: {can}"
+state = State()
 
-    async def launch_default():
-        await url_launcher.launch_url(url.value)
 
-    async def launch_in_app_webview():
-        await url_launcher.launch_url(
-            url.value,
-            mode=ft.LaunchMode.IN_APP_WEB_VIEW,
-            web_view_configuration=ft.WebViewConfiguration(
-                enable_javascript=True, enable_dom_storage=True
-            ),
+def main(page: ft.Page):
+    page.title = "Canvas Example"
+
+    file_picker = ft.FilePicker()
+
+    def handle_pan_start(e: ft.DragStartEvent):
+        state.x = e.local_position.x
+        state.y = e.local_position.y
+
+    async def handle_pan_update(e: ft.DragUpdateEvent):
+        ft.context.disable_auto_update()
+        canvas.shapes.append(
+            cv.Line(
+                x1=state.x,
+                y1=state.y,
+                x2=e.local_position.x,
+                y2=e.local_position.y,
+                paint=ft.Paint(stroke_width=3),
+            )
         )
+        canvas.update()
+        state.shapes_count += 1
 
-    async def launch_in_app_browser_view():
-        await url_launcher.launch_url(
-            url.value,
-            mode=ft.LaunchMode.IN_APP_BROWSER_VIEW,
-            browser_configuration=ft.BrowserConfiguration(show_title=True),
-        )
+        if state.shapes_count == MAX_SHAPES_PER_CAPTURE:
+            await canvas.capture()
+            canvas.shapes.clear()
+            canvas.update()
+            state.shapes_count = 0
 
-    async def launch_external():
-        await url_launcher.launch_url(
-            url.value,
-            mode=ft.LaunchMode.EXTERNAL_APPLICATION,
-            web_only_window_name="_blank",
-        )
+        state.x = e.local_position.x
+        state.y = e.local_position.y
 
-    async def launch_popup():
-        await url_launcher.open_window(
-            url.value, title="Flet popup", width=480, height=640
-        )
+    canvas = cv.Canvas(
+        expand=False,
+        shapes=[
+            cv.Fill(ft.Paint(color=ft.Colors.WHITE)),
+        ],
+        content=ft.GestureDetector(
+            on_pan_start=handle_pan_start,
+            on_pan_update=handle_pan_update,
+            drag_interval=10,
+        ),
+    )
 
-    async def close_webview(_):
-        supported = await url_launcher.supports_close_for_launch_mode(
-            ft.LaunchMode.IN_APP_WEB_VIEW
-        )
-        if supported:
-            await url_launcher.close_in_app_web_view()
-        else:
-            status.value = "Close in-app web view not supported on this platform"
+    async def save_image():
+        await canvas.capture()
+        capture = await canvas.get_capture()
+        if capture:
+            file_path = await file_picker.save_file(
+                file_name="flet_picture.png", src_bytes=capture
+            )
+            if file_path and page.platform in [
+                ft.PagePlatform.MACOS,
+                ft.PagePlatform.WINDOWS,
+                ft.PagePlatform.LINUX,
+            ]:
+                with open(file_path, "wb") as f:
+                    f.write(capture)
 
     page.add(
-        ft.Column(
-            [
-                url,
-                ft.Row(
-                    [
-                        ft.Button("Launch URL", on_click=launch_default),
-                        ft.Button(
-                            "Launch in-app webview", on_click=launch_in_app_webview
-                        ),
-                        ft.Button(
-                            "Launch in-app browser view",
-                            on_click=launch_in_app_browser_view,
-                        ),
-                        ft.Button("Launch external/new tab", on_click=launch_external),
-                        ft.Button("Open popup window (web)", on_click=launch_popup),
-                        ft.Button("Can launch?", on_click=can_launch),
-                        ft.Button("Close in-app webview", on_click=close_webview),
-                    ],
-                    wrap=True,
-                ),
-                status,
-            ],
-        )
+        ft.Button("Save image", on_click=save_image),
+        ft.Container(
+            content=canvas,
+            border_radius=5,
+            border=ft.Border.all(2),
+            bgcolor=ft.Colors.WHITE,
+            width=float("inf"),
+            expand=True,
+        ),
     )
 
 
