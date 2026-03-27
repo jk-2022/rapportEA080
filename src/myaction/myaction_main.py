@@ -144,10 +144,10 @@ def get_all_localites(projet_id):
         print(e)
 
 def get_filtered_ouvrages(type_ouvrage=None, 
-                          localite=None, 
+                        #   localite=None, 
                           etat=None, 
-                          numero_irh=None,
-                          suivi=None, 
+                        #   numero_irh=None,
+                        #   suivi=None, 
                           projet_id=None):
     conn = connected_db()
     cursor = conn.cursor()
@@ -158,18 +158,18 @@ def get_filtered_ouvrages(type_ouvrage=None,
     if type_ouvrage:
         query += " AND type_ouvrage = ?"
         params.append(type_ouvrage)
-    if localite:
-        query += " AND localite = ?"
-        params.append(localite)
+    # if localite:
+    #     query += " AND localite = ?"
+    #     params.append(localite)
     if etat:
         query += " AND etat = ?"
         params.append(etat)
-    if numero_irh:
-        query += " AND numero_irh = ?"
-        params.append(numero_irh)
-    if suivi:
-        query += " AND suivi = ?"
-        params.append(suivi)
+    # if numero_irh:
+    #     query += " AND numero_irh = ?"
+    #     params.append(numero_irh)
+    # if suivi:
+    #     query += " AND suivi = ?"
+    #     params.append(suivi)
     if projet_id:
         query += " AND projet_id = ?"
         params.append(projet_id)
@@ -939,3 +939,9 @@ def _norm(s):
     if s is None:
         return "Inconnue"
     return str(s).strip()
+
+def delete_ouvrage(vid: int):
+    conn = connected_db()
+    conn.execute("DELETE FROM ouvrages WHERE id=?", (vid,))
+    conn.commit()
+    conn.close()

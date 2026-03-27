@@ -10,6 +10,7 @@ class AcceuilView(ft.View):
         self.route="/"
         self.state=state
         page_height=get_value("win_height")
+        self.scroll=ft.ScrollMode.AUTO,
         bar_cnt=ft.Container(height=60,
                          content=ft.Row(
                              [
@@ -30,6 +31,7 @@ class AcceuilView(ft.View):
             expand_loose=True,
             controls=[
                 AcceuilCard(title="Projets",img="projet.png",change_view=self.go_projet_view),
+                AcceuilCard(title="Tous les ouvrages",img=ft.Icons.WATER,change_view=self.go_allouvrage_view),
                 AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
                 AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
                 AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
@@ -109,7 +111,10 @@ class AcceuilView(ft.View):
         await self.handle_change()
         await self.page.push_route("/projet")
         
-        
+    async def go_allouvrage_view(self,e):
+        await self.handle_change()
+        await self.page.push_route('/allouvrage')   
+             
     async def go_stats(self,e):
         await self.handle_change()
         await self.page.push_route('/stats')
@@ -163,3 +168,4 @@ class AcceuilView(ft.View):
             self.page.theme_mode=ft.ThemeMode.DARK
             set_value('theme','ThemeMode.DARK')
         self.page.update()
+        

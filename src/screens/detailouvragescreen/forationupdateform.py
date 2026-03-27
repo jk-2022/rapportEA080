@@ -123,6 +123,5 @@ class ForationUpdateForm(ft.Container):
         )
         update_foration(foration=foration)
         self.formcontrol._refresh()
-        
         self.page.pop_dialog()
 

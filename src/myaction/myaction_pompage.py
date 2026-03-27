@@ -64,8 +64,8 @@ def load_one_pompage(ouvrage_id):
     if rows:
         col_names = [description[0] for description in cur.description]
         data = [dict(zip(col_names, row)) for row in rows]
-        return data
-    return rows
+        return data[0]
+    return {}
 
 def create_pompage(ouvrage_id,date_pompage, type_pompe, cote_pompe, temps_pompage, debit_pompage, niv_dynamique, niv_statique, observation):
     conn=connected_db()

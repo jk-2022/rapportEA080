@@ -1,8 +1,10 @@
 import flet as ft
 
+from appstate import Ouvrage
 from myaction.myaction_main import load_all_data_for_csv
 from screens.ouvragescreen.excelfilterouvrage import OuvrageExcelExporter
 from screens.ouvragescreen.filtreouvragecontrol import FiltreOuvrageControl
+from utils.constants import champ_recherche
 from .ouvragecard import OuvrageCard
 
 from mystorage import *
@@ -18,17 +20,20 @@ class ListOuvrageControl(ft.Column):
         self.formcontrol=formcontrol
         self.expand=True
         self.projet=self.state.selected_projet
+        self._query=""
         
-        self.check_box=ft.Checkbox(on_change=self.selected_bool_all_ouvrage)
+        self.check_box=ft.Checkbox(label=ft.Text("Tous"), on_change=self.selected_bool_all_ouvrage)
         self.nbre_select=ft.Text("selectionnés:")
         self.ouvrage_list_selected=[]
         self.ouvrage_object_list_selected=[]
+        
+        self.barre_recherche=champ_recherche("projet",self._on_search)
         
         self.ouvrage_list = ft.Column(
             expand=True,
             scroll=ft.ScrollMode.ALWAYS
             )
-        self.searsh_button = ft.Button(
+        self.filtre_button = ft.Button(
             "Filter",icon=ft.Icons.SEARCH, 
             on_click= lambda e :self.go_filter_content()
             )
@@ -36,10 +41,10 @@ class ListOuvrageControl(ft.Column):
             "Ajouter",icon=ft.Icons.ADD, 
             on_click= lambda e : self.formcontrol.change_content("create-ouvrage-content")
             )
-        self.nbre_ouvrage_cnt=ft.Row(
-                                    [
-                                    ],alignment=ft.MainAxisAlignment.CENTER
-                                )
+        # self.nbre_ouvrage_cnt=ft.Row(
+        #                             [
+        #                             ],alignment=ft.MainAxisAlignment.CENTER
+        #                         )
 
         self.controls= [
                     ft.AppBar(title=ft.Text("Tous ouvrages confondus")),
@@ -47,9 +52,8 @@ class ListOuvrageControl(ft.Column):
                         content=ft.Row(
                             [
                                 self.check_box,
-                                self.nbre_ouvrage_cnt,
-                                self.searsh_button,
-                                self.add_button,
+                                self.barre_recherche,
+                                self.filtre_button,
                             ],alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                         ),
                         padding=ft.Padding.only(left=10, right=10)
@@ -60,19 +64,26 @@ class ListOuvrageControl(ft.Column):
                         content=ft.Row(
                             [
                                 self.nbre_select,
-                                ft.Button("Exporter XlsX",on_click= lambda e :self.showGenerate_csv())
+                                ft.Button("Exporter XlsX",on_click= lambda e :self.showGenerate_csv()),
+                                self.add_button,
                             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                         )
                     )
                         ]
-            
-        
-        self.load_ouvrages()
 
-    def load_ouvrages(self):
-        self.ouvrages=self.state.load_ouvrages()
-        nbre_ouvrage=len(self.ouvrages)
-        self.nbre_ouvrage_cnt.controls.append(ft.Text(f"Total : {nbre_ouvrage}", size=12))
+        self._refresh()
+    
+    def _filtered(self) -> list[Ouvrage]:
+        q = self._query.lower()
+        return [o for o in self.state.load_ouvrages() if q in o.lieu.lower() or q in o.localite.lower() or q in o.canton.lower() or q in str(o.numero_irh)]
+        
+    def _on_search(self, e):
+        self._query = self.barre_recherche.value
+        self._refresh()
+
+    def _refresh(self):
+        self.ouvrage_object_list_selected=[]
+        self.ouvrages=self._filtered()
         self.ouvrage_list.controls.clear()
         if self.ouvrages:
             for ouvrage in self.ouvrages:

@@ -127,6 +127,5 @@ class ForationForm(ft.Container):
     def SaveData(self):
         donnees = self.recupererDonnees()
         create_foration(**donnees)
-        self.formcontrol.updateData()
         self.page.pop_dialog()
 

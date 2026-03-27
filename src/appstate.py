@@ -5,6 +5,8 @@ from myaction.myaction_panne import Panne, load_all_pannes
 from myaction.myaction_projet import *
 from myaction.myaction_ouvrage import *
 from myaction.myaction_entreprise import *
+from myaction.myaction_foration import *
+from myaction.myaction_pompage import *
 from myaction.myaction_suivi import Suivi, load_all_suivis
 from myaction.myaction_village import Village, load_all_villages
 
@@ -18,6 +20,10 @@ class AppState:
     villages:list[Village]=field(default_factory=list)
     suivis:list[Suivi]=field(default_factory=list)
     pannes:list[Panne]=field(default_factory=list)
+    entreprises: list[Entreprise] = field(default_factory=list)
+    all_ouvrages: list[Ouvrage] = field(default_factory=list)
+    villages_sans_forage: list[Village] = field(default_factory=list)
+    
     selected_projet:Projet|None=None
     selected_ouvrage:Ouvrage|None=None
     selected_entreprise:Entreprise|None=None
@@ -45,5 +51,8 @@ class AppState:
         return self.suivis
 
     def load_pannes(self):
-        self.suivis=load_all_pannes(self.selected_ouvrage.id)
-        return self.suivis
+        self.pannes=load_all_pannes(self.selected_ouvrage.id)
+        return self.pannes
+    
+    def load_all_ouvrages_flat(self):
+        self.all_ouvrages=load_all_ouvrages()

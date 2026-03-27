@@ -2,7 +2,7 @@ import asyncio
 import flet as ft
 import os
 
-from myaction.myaction_main import get_all_localites, get_filtered_ouvrages, get_one_ouvrages, load_all_data_for_csv
+from myaction.myaction_main import get_filtered_ouvrages, get_one_ouvrages, load_all_data_for_csv
 from screens.ouvragescreen.excelfilterouvrage import OuvrageExcelExporter
 from .datatable import Mytable, tb
 
@@ -12,11 +12,11 @@ def get_archive_path():
     ARCHIVES_PATH=get_value("archive_path")
     return ARCHIVES_PATH
 
-class FiltreOuvrageControl(ft.Column):
-    def __init__(self,state, formcontrol):
+class FiltreOuvrageView(ft.View):
+    def __init__(self,state):
         super().__init__()
         self.state=state
-        self.formcontrol=formcontrol
+        self.route=f"projet/list-ouvrage/filtre-ouvrage"
         self.liste_ouvrage_filtrer=[]
         
         self.dropdown_type = ft.Dropdown(
@@ -64,9 +64,7 @@ class FiltreOuvrageControl(ft.Column):
             )
         
         self.controls= [
-                        ft.AppBar(title=ft.Text("Créer un nouveau Ouvrage "),
-                                  leading=ft.IconButton(icon=ft.Icons.ARROW_BACK, 
-                                              on_click= lambda e: self.go_list_ouvrage_cont())
+                        ft.AppBar(title=ft.Text("Créer un nouveau Ouvrage ")
                                   ),
                         ft.Container(
                             expand=True,
@@ -93,9 +91,7 @@ class FiltreOuvrageControl(ft.Column):
                             )
                         )
                     ]
- 
-    
-    
+
     def update_list(self):
         self.ouvrage_column_list.controls.clear()
         projet=self.state.selected_projet
@@ -172,10 +168,6 @@ class FiltreOuvrageControl(ft.Column):
             self.page.show_dialog(ft.SnackBar(ft.Text(f"{file_path} saved successfuly")))
             return True
         self.page.show_dialog(ft.SnackBar(ft.Text(f"Error for vaving {filename}")))
-    
-    
-    def go_list_ouvrage_cont(self):
-        self.formcontrol.change_content("list-ouvrage-content")
         
     def close_dlg(self):
         self.page.pop_dialog()

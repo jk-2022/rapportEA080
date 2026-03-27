@@ -58,8 +58,8 @@ def load_one_foration(ouvrage_id):
     if rows:
         col_names = [description[0] for description in cur.description]
         data = [dict(zip(col_names, row)) for row in rows]
-        return data
-    return rows
+        return data[0]
+    return {}
 
 def create_foration(ouvrage_id,date_foration, prof_alteration, prof_socle, prof_total, prof_tube_crepine, prof_tube_plein, debit_soufflage, observation):
     conn=connected_db()

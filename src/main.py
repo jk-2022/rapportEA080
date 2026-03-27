@@ -44,22 +44,52 @@ async def main(page: ft.Page):
     def route_change():
         page.views.clear()
         page.views.append(AcceuilView(state=state))
-        if page.route == "/projet" or page.route == "/projet/list-ouvrage":
+        if page.route == "/projet":
             page.views.append(ProjectView(state=state))
-        if page.route == "/projet/list-ouvrage"  or page.route == "/projet/list-ouvrage/recap-ouvrage":
+            
+        if page.route == "/projet/list-ouvrage":
+            page.views.append(ProjectView(state=state))
             page.views.append(OuvrageView(state=state))
-        if page.route == "/projet/list-ouvrage/recap-ouvrage":
-            page.views.append(RecapOuvrageView(state=state))
+            
+        if page.route == "/projet/list-ouvrage/detail-ouvrage":
+            page.views.append(ProjectView(state=state))
+            page.views.append(OuvrageView(state=state))
+            page.views.append(DetailOuvrageView(state=state))
+            
+        if page.route == "/projet/list-ouvrage/create-ouvrage":
+            page.views.append(ProjectView(state=state))
+            page.views.append(OuvrageView(state=state))
+            page.views.append(CreateOuvrageView(state=state))
+            
+        if page.route == "/projet/list-ouvrage/filtre-ouvrage":
+            page.views.append(ProjectView(state=state))
+            page.views.append(OuvrageView(state=state))
+            page.views.append(FiltreOuvrageView(state=state))
+            
+        if page.route == "/projet/list-ouvrage/detail-ouvrage/edit-ouvrage":
+            page.views.append(ProjectView(state=state))
+            page.views.append(OuvrageView(state=state))
+            page.views.append(DetailOuvrageView(state=state))
+            page.views.append(EditOuvrageView(state=state))
+            
+        if page.route == '/allouvrage':
+            page.views.append(AllOuvrageView(state=state))
+            
         if page.route == "/stats":
             page.views.append(StatView(state=state))
+            
         if page.route == "/list-entreprise":
             page.views.append(ListEntrepriseView(state=state))
+            
         if page.route == "/list-village":
             page.views.append(VillageView(state=state))
+            
         if page.route == "/archive":
             page.views.append(ArchiveView(state=state))
+            
         if page.route == "/apropos":
-            page.views.append(ApropoView(state=state))
+            page.views.append(AproposView(state=state))
+            
         if page.route == "/settings":
             page.views.append(SettingView(state=state))
         

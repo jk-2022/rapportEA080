@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+from typing import Optional
 import sqlite3 
 import os
 
@@ -123,10 +124,13 @@ async def init_db_ouvrage():
     conn.commit()
     conn.close()
 
-def load_all_ouvrages(projet_id):
+def load_all_ouvrages(projet_id:Optional[int]=None):
     conn=connected_db()
     cur=conn.cursor()
-    rows=cur.execute(" SELECT * FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC", (projet_id,)).fetchall()
+    if projet_id:
+        rows=cur.execute(" SELECT * FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC", (projet_id,)).fetchall()
+    else:
+        rows=cur.execute(" SELECT * FROM ouvrages ORDER BY created_at DESC").fetchall()
     return [Ouvrage(*row) for row in rows]
 
 def load_one_ouvrage(ouvrage_id):

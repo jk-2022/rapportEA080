@@ -41,6 +41,12 @@ def load_all_projets():
     rows=cur.execute(" SELECT * FROM projets ORDER BY created_at DESC").fetchall()
     return [Projet(*row) for row in rows]
 
+def load_one_projets(id):
+    conn=connected_db()
+    cur=conn.cursor()
+    rows=cur.execute(" SELECT * FROM projets WHERE id=?", (id,)).fetchall()
+    return [Projet(*row) for row in rows]
+
 def create_projet(name,title,secteurs):
     conn=connected_db()
     cur=conn.cursor()

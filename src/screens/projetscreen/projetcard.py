@@ -3,6 +3,8 @@ import asyncio
 from mystorage import *
 from screens.projetscreen.projetupdateform import ProjetUpdateForm
 from myaction.myaction_projet import delete_projet, Projet
+from utils.constants import PRIMARY, TEXT_DARK, TEXT_GREY
+
 
 class ProjetCard(ft.Card):
     def __init__(self, state, projet: Projet, formcontrol):
@@ -17,51 +19,51 @@ class ProjetCard(ft.Card):
             padding=ft.Padding.all(10),
             data=projet,
             ink=True,
-            # expand=True,
             content=ft.Row(
                 [
                     ft.Container(
-                        content=ft.Column(
-                            [
-                                ft.Text(
-                                    f"{projet.name}", size=13,
-                                    weight=ft.FontWeight.BOLD),
-                            ],alignment=ft.MainAxisAlignment.CENTER
-                        )
-                        ),
-                    ft.VerticalDivider(color=ft.Colors.RED,width=5),
-                    ft.Container(
-                        content=ft.Column(
-                            [
-                                ft.Container(
-                                    content=ft.Row(
-                                        [
-                                            ft.Text(
-                                                f"{projet.title}\nSecteurs: {projet.secteurs}", 
-                                                size=13,width=300)
-                                        ],expand=True
-                                    )
-                                    ),
-                            ],alignment=ft.MainAxisAlignment.CENTER
-                        )
-                        ,expand=True
-                        ),
-                    ft.Container(
-                        border=ft.Border.all(2,color="#153057"),
-                        border_radius=10,
-                        bgcolor="#0a1d37",
-                        content=ft.Column(
-                            [
-                                ft.IconButton(icon=ft.Icons.EDIT,icon_color=ft.Colors.WHITE, on_click= lambda e :self.show_edit_projet()),
-                                ft.IconButton(icon=ft.Icons.DELETE,icon_color=ft.Colors.RED_700, on_click= lambda e :self.show_delete_projet()),
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            expand_loose=True
-                        )
-                    )
+                        content=ft.Icon(ft.Icons.FOLDER, color="#FFFFFF", size=24),
+                        bgcolor=PRIMARY,
+                        border_radius=ft.BorderRadius(10, 10, 10, 10),
+                        padding=ft.Padding(10, 10, 10, 10),
+                    ),
+                    ft.Column(
+                        [
+                            ft.Text(projet.name, weight=ft.FontWeight.BOLD, color=TEXT_DARK, size=14),
+                            ft.Text(projet.title or "Aucune description",
+                                    color=TEXT_GREY, size=12, max_lines=1,
+                                    overflow=ft.TextOverflow.ELLIPSIS),
+                            # ft.Text(f"{p.date_debut} — {p.date_fin}",
+                            #         color=TEXT_GREY, size=11),
+                        ],
+                        spacing=2,
+                        expand=True,
+                    ),
+                    ft.PopupMenuButton(
+                        icon=ft.Icons.MORE_VERT,
+                        icon_color=TEXT_GREY,
+                        items=[
+                            ft.PopupMenuItem(
+                                ft.Text("Ouvrir"),
+                                icon=ft.Icons.OPEN_IN_NEW,
+                                on_click= self.selectprojet,
+                            ),
+                            ft.PopupMenuItem(
+                                ft.Text("Modifier"),
+                                icon=ft.Icons.EDIT,
+                                on_click=lambda _: self.show_edit_projet(),
+                            ),
+                            ft.PopupMenuItem(
+                                ft.Text("Supprimer"),
+                                icon=ft.Icons.DELETE,
+                                on_click=lambda _: self.show_delete_projet(),
+                            ),
+                        ],
+                    ),
                     ]
                 ))
         
+    
         
     async def selectprojet(self,e):
         self.state.selected_projet=self.projet
