@@ -5,7 +5,7 @@ import flet as ft
 from appstate import Projet
 from screens.projetscreen.projetcard import ProjetCard
 from screens.projetscreen.projetform import ProjetForm
-from utils.constants import champ_recherche
+from utils.constants import app_bar, champ_recherche
 
 class ProjectView(ft.View):
     def __init__(self,state):
@@ -29,9 +29,7 @@ class ProjectView(ft.View):
         self.controls=[ft.SafeArea(
             ft.Column(
                 controls=[
-                    ft.AppBar(
-                            title=ft.Text("Projets")
-                        ),
+                    app_bar(title=f"Tous vos projets"),
                     ft.Container(
                         padding=ft.Padding.only(left=10,right=10),
                         content=self.barre_recherche

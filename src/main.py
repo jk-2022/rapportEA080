@@ -78,6 +78,9 @@ async def main(page: ft.Page):
         if page.route == "/stats":
             page.views.append(StatView(state=state))
             
+        if page.route == "/dashboard":
+            page.views.append(DashboardView(state=state))
+            
         if page.route == "/list-entreprise":
             page.views.append(ListEntrepriseView(state=state))
             

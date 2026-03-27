@@ -4,7 +4,7 @@ from appstate import Ouvrage
 from myaction.myaction_main import load_all_data_for_csv
 from screens.ouvragescreen.excelfilterouvrage import OuvrageExcelExporter
 from screens.ouvragescreen.filtreouvragecontrol import FiltreOuvrageControl
-from utils.constants import champ_recherche
+from utils.constants import app_bar, champ_recherche
 from .ouvragecard import OuvrageCard
 
 from mystorage import *
@@ -16,6 +16,7 @@ def get_archive_path():
 class OuvrageView(ft.View):
     def __init__(self,state):
         super().__init__()
+        self.padding=0
         self.state=state
         self.route=f"/projet/list-ouvrage"
         self.expand=True
@@ -43,7 +44,7 @@ class OuvrageView(ft.View):
             )
 
         self.controls= [
-                    ft.AppBar(title=ft.Text("Tous ouvrages confondus")),
+                    app_bar(title=f"Tous ouvrages de {self.projet.name}"),
                     ft.Container(
                         content=ft.Row(
                             [

@@ -15,14 +15,21 @@ def _info_row(label: str, value: str) -> ft.Row:
             spacing=8,
         )
         
-def _section_localisation(o: Ouvrage) -> ft.Column:
+def _section_localisation(o: Ouvrage,copy_coords) -> ft.Column:
     return ft.Column([
         section_title("📍 Localisation"),
         _info_row("Latitude", o.coordonnee_x),
-        _info_row("Longitude", o.coordonnee_y),
+        ft.Row(
+            [
+                _info_row("Longitude", o.coordonnee_y),
+                ft.IconButton(icon=ft.Icons.COPY, 
+                                on_click=copy_coords
+                                )
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        )
     ], spacing=8)
 
-def _section_forage(foration: dict, sho_edit) -> ft.Column:
+def _section_forage(foration: dict, sho_edit, share_foration) -> ft.Column:
     return ft.Column([
         section_title("🔩 Données de Forage"),
         _info_row("Date foration", f"{foration.get('date_foration','-')} m"),
@@ -30,7 +37,16 @@ def _section_forage(foration: dict, sho_edit) -> ft.Column:
         _info_row("Prof socle", f"{foration.get('prof_socle','-')} m"),
         _info_row("Prof total", f"{foration.get('prof_total','-')} m"),
         _info_row("Prof tube_crepine", f"{foration.get('prof_tube_crepine','-')} m"),
-        _info_row("Prof tube_plein", f"{foration.get('prof_tube_plein','-')} m"),
+        
+        ft.Row(
+            [
+                _info_row("Prof tube_plein", f"{foration.get('prof_tube_plein','-')} m"),
+                ft.IconButton(icon=ft.Icons.SHARE, 
+                                on_click=share_foration,
+                                icon_color="#1E88E5"
+                                )
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        ),
         ft.Row(
             [
                 _info_row("Debit soufflage", f"{foration.get('debit_soufflage','-')} m3/h"),
@@ -41,7 +57,7 @@ def _section_forage(foration: dict, sho_edit) -> ft.Column:
         )
     ], spacing=8)
 
-def _section_pompage(pompage: dict, show_edit_pompage) -> ft.Column:
+def _section_pompage(pompage: dict, show_edit_pompage, share_pompage) -> ft.Column:
     return ft.Column([
         section_title("💧 Données de Pompage"),
         _info_row("Date pompage", f"{pompage.get('date_pompage','-')} m"),
@@ -49,7 +65,15 @@ def _section_pompage(pompage: dict, show_edit_pompage) -> ft.Column:
         _info_row("Côte pompe", f"{pompage.get('cote_pompe','-')} m"),
         _info_row("Niv. dynamique", f"{pompage.get('niv_statique','-')} m"),
         _info_row("Niv. Statique", f"{pompage.get('niv_dynamique','-')} m"),
-        _info_row("Durée pompage", f"{pompage.get('temps_pompage','-')} h"),
+        ft.Row(
+            [
+                 _info_row("Durée pompage", f"{pompage.get('temps_pompage','-')} h"),
+                ft.IconButton(icon=ft.Icons.SHARE, 
+                                on_click=share_pompage,
+                                icon_color="#1E88E5"
+                                )
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        ),
         ft.Row(
             [
                 _info_row("Débit pompage", f"{pompage.get('debit_pompage','-')} m³/h"),

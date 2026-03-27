@@ -31,8 +31,9 @@ class AcceuilView(ft.View):
             expand_loose=True,
             controls=[
                 AcceuilCard(title="Projets",img="projet.png",change_view=self.go_projet_view),
-                AcceuilCard(title="Tous les ouvrages",img=ft.Icons.WATER,change_view=self.go_allouvrage_view),
+                AcceuilCard(title="Tous les ouvrages",img="eau_home.png",change_view=self.go_allouvrage_view),
                 AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
+                AcceuilCard(title="Dashboard",img="dashboard.png",change_view=self.go_dashboard_view),
                 AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
                 AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
                 AcceuilCard(title="Villages sans forage",img="village.png",change_view=self.go_village_view),
@@ -151,6 +152,9 @@ class AcceuilView(ft.View):
                                     go_settings=self.go_settings)
         await self.page.show_drawer()
 
+    async def go_dashboard_view(self,e):
+        await self.page.push_route("/dashboard")
+        
     async def go_static_view(self,e):
         await self.page.push_route("/stats")
        

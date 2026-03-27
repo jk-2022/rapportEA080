@@ -5,28 +5,28 @@ from datetime import datetime
 from mystorage import get_value
 from screens.archivescreen.archivecard import ArchiveCard
 
+
 def get_archive_path():
     ARCHIVES_PATH=get_value("archive_path")
     return ARCHIVES_PATH
 
-def get_exported_files():
-    files=[]
-    for file_name in os.listdir(get_archive_path()):
-        file_path = os.path.join(get_archive_path(), file_name)
-        if os.path.isfile(file_path):
-            ext = file_name.split(".")[-1].upper()
-            created = datetime.fromtimestamp(os.path.getctime(file_path)).strftime("%d/%m/%Y %H:%M")
-            files.append({"name": file_name, "type": ext, "date": created})
-    return files
+ARCHIVE_DIR=get_archive_path()
 
-def get_icon_for_extension(extension: str):
-    icons_map = {
-        "PDF": ft.Icons.PICTURE_AS_PDF,
-        "DOCX": ft.Icons.DESCRIPTION,
-        "CSV": ft.Icons.TABLE_CHART,
-        # Ajoute d'autres si besoin
-    }
-    return icons_map.get(extension, ft.Icons.INSERT_DRIVE_FILE)
+def list_archives() -> list[dict]:
+    files = []
+    if os.path.exists(ARCHIVE_DIR):
+        for f in sorted(os.listdir(ARCHIVE_DIR), reverse=True):
+            full = os.path.join(ARCHIVE_DIR, f)
+            size = os.path.getsize(full)
+            mtime = os.path.getmtime(full)
+            files.append({
+                "name": f,
+                "path": full,
+                "size": size,
+                "date": datetime.fromtimestamp(mtime).strftime("%d/%m/%Y %H:%M"),
+                "ext": os.path.splitext(f)[1].lower(),
+            })
+    return files
 
 class ArchiveView(ft.View):
     def __init__(self,state):
@@ -55,7 +55,7 @@ class ArchiveView(ft.View):
         
     def load_archives(self):
         self.archive_list.controls.clear()
-        for file in get_exported_files():
+        for file in list_archives():
             row = ArchiveCard(file,self.delete_file,self.open_file,self)                 
             self.archive_list.controls.append(row)
 

@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field 
 import flet as ft
 
+from myaction.myaction_main import get_stats
 from myaction.myaction_panne import Panne, load_all_pannes
 from myaction.myaction_projet import *
 from myaction.myaction_ouvrage import *
@@ -23,6 +24,7 @@ class AppState:
     entreprises: list[Entreprise] = field(default_factory=list)
     all_ouvrages: list[Ouvrage] = field(default_factory=list)
     villages_sans_forage: list[Village] = field(default_factory=list)
+    stats: dict = field(default_factory=dict)
     
     selected_projet:Projet|None=None
     selected_ouvrage:Ouvrage|None=None
@@ -56,3 +58,7 @@ class AppState:
     
     def load_all_ouvrages_flat(self):
         self.all_ouvrages=load_all_ouvrages()
+        
+    # ── Stats ─────────────────────────────────────────────────────────────────
+    def load_stats(self):
+        self.stats = get_stats(); return self.stats

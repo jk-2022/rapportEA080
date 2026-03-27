@@ -313,6 +313,62 @@ def export_sqlite_to_json(file_name):
         conn.close()
 
 
+
+
+
+
+
+
+
+def get_stats():
+    conn=connected_db(); s={}
+    s['total_ouvrages']    = conn.execute("SELECT COUNT(*) FROM ouvrages").fetchone()[0]
+    s['total_projets']     = conn.execute("SELECT COUNT(*) FROM projets").fetchone()[0]
+    s['total_entreprises'] = conn.execute("SELECT COUNT(*) FROM entreprises").fetchone()[0]
+    s['total_villages']    = conn.execute("SELECT COUNT(*) FROM villages").fetchone()[0]
+    s['villages_sans_forage'] = conn.execute("""
+        SELECT COUNT(*) FROM villages v WHERE NOT EXISTS(
+            SELECT 1 FROM ouvrages o WHERE o.localite=v.localite
+            AND o.commune=v.commune AND o.prefecture=v.prefecture)""").fetchone()[0]
+    for etat,key in [('Bon état','bon'),('En panne','en_panne'),('Abandonnée','abandonnee')]:
+        s[f'ouvrages_{key}']=conn.execute("SELECT COUNT(*) FROM ouvrages WHERE etat=?",(etat,)).fetchone()[0]
+    for t in ['PMH','PEA','AEP','PMH_AEP']:
+        s[f'ouvrages_{t.lower()}']=conn.execute("SELECT COUNT(*) FROM ouvrages WHERE type_ouvrage=?",(t,)).fetchone()[0]
+    # s['par_projet']=[{"nom":r["name"],"nb":r["nb"]} for r in conn.execute("""
+    #     SELECT p.name, COUNT(o.id) nb FROM projets p
+    #     LEFT JOIN ouvrages o ON o.projet_id=p.id GROUP BY p.id ORDER BY nb DESC""").fetchall()]
+    # s['par_prefecture']=[{"nom":r["prefecture"],"nb":r["nb"]} for r in conn.execute("""
+    #     SELECT prefecture,COUNT(*) nb FROM ouvrages WHERE prefecture!=''
+    #     GROUP BY prefecture ORDER BY nb DESC LIMIT 8""").fetchall()]
+    conn.close(); return s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def get_statistiques():
     conn = connected_db()
     cursor = conn.cursor()

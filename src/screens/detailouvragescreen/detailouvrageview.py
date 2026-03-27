@@ -10,14 +10,15 @@ from appstate import Projet
 from appstate import Foration
 from appstate import Pompage
 from appstate import Panne 
-from myaction.myaction_pompage import load_one_pompage
+from myaction.myaction_pompage import delete_pompage, load_one_pompage
 from myaction.myaction_main import Ouvrage, delete_ouvrage
-from myaction.myaction_foration import load_one_foration
+from myaction.myaction_foration import load_one_foration, delete_foration
 from myaction.myaction_panne import  load_all_pannes, delete_panne
 from myaction.myaction_suivi import Suivi, load_all_suivis, delete_suivi
 
-from screens.detailouvragescreen.sections import _section_forage, _section_localisation, _section_observations, _section_pannes, _section_pompage, _section_reception, _section_suivis
-from screens.detailouvragescreen.suiviform import SuiviForm
+from .convert_to_text import convert_data_all_to_text, convert_data_foration_to_text, convert_data_pompage_to_text
+from .sections import _section_forage, _section_localisation, _section_observations, _section_pannes, _section_pompage, _section_suivis
+from .suiviform import SuiviForm
 from .forationform import ForationForm
 from .forationupdateform import ForationUpdateForm
 from .pompageform import PompageForm
@@ -28,7 +29,7 @@ from .panneupdateform import PanneUpdateForm
 from utils.constants import (
     PRIMARY, PRIMARY_LIGHT, ACCENT, SURFACE, TEXT_DARK, TEXT_GREY, BG_CARD,
     SUCCESS, WARNING, DANGER, SHADOW,
-    ROUTES, app_bar, etat_badge, categorie_chip, text_field, divider, fab,
+    ROUTES, app_bar, etat_badge, categorie_chip, divider,
 )
 
 
@@ -44,6 +45,9 @@ class DetailOuvrageView(ft.View):
         self.bgcolor = SURFACE
         self.scroll=ft.ScrollMode.AUTO
         self.padding = ft.Padding(0, 0, 0, 0)
+        
+        self.share=ft.Share()
+        self.copy_text=ft.Clipboard()
         
         self.projet: Projet= self.state.selected_projet
         self.ouvrage: Ouvrage = self.state.selected_ouvrage
@@ -104,10 +108,19 @@ class DetailOuvrageView(ft.View):
                         [
                             ft.Text(f"Village : {self.ouvrage.lieu or '—'}  •  {self.ouvrage.canton or ''}",
                             color=ft.Colors.with_opacity(0.85, "#FFFFFF"), size=13),
-                            ft.IconButton(icon=ft.Icons.EDIT, 
+                            ft.Row(
+                                [
+                                    ft.IconButton(
+                                        icon=ft.Icons.SHARE, 
+                                        on_click=self.share_all_data,
+                                        icon_color="#1E88E5"
+                                    ),
+                                    ft.IconButton(icon=ft.Icons.EDIT, 
                                           icon_color=ft.Colors.WHITE,
                                           on_click=self.go_editouvrage_view
                                           )
+                                ]
+                            )
                         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                     )
                 ], spacing=6),
@@ -125,11 +138,11 @@ class DetailOuvrageView(ft.View):
             # ── Sections ─────────────────────────────────────
             ft.Container(
                 content=ft.Column([
-                    _section_localisation(self.ouvrage),
+                    _section_localisation(self.ouvrage,copy_coords=self.copyCoords),
                     divider(),
-                    _section_forage(foration=self.foration, sho_edit=lambda e: self.showForationForm()),
+                    _section_forage(foration=self.foration, sho_edit=lambda e: self.showForationForm(),share_foration=self.share_foration),
                     divider(),
-                    _section_pompage(self.pompage, show_edit_pompage=lambda e: self.showPompage()),
+                    _section_pompage(self.pompage, show_edit_pompage=lambda e: self.showPompage(), share_pompage=self.share_pompage),
                     divider(),
                     # _section_reception(self.ouvrage),
                     # divider(),
@@ -170,6 +183,43 @@ class DetailOuvrageView(ft.View):
             content_padding=0
         )
         self.page.show_dialog(self.dlg_modal)
+
+    async def share_foration(self,e):
+        text_to_shared=convert_data_foration_to_text(self.ouvrage.to_dict(),self.foration)
+        result = await self.share.share_text(
+            text_to_shared,
+            subject="Greeting",
+            title="Share greeting",
+        ) 
+
+    async def share_all(self,e):
+        text_to_shared=convert_data_all_to_text(self.ouvrage.to_dict(),self.foration, self.pompage)
+        result = await self.share.share_text(
+            text_to_shared,
+            subject="Greeting",
+            title="Share greeting",
+        )
+
+    async def share_pompage(self,e):
+        text_to_shared=convert_data_pompage_to_text(self.ouvrage.to_dict(),self.pompage)
+        result = await self.share.share_text(
+            text_to_shared,
+            subject="Greeting",
+            title="Share greeting",
+        )
+
+    async def share_all_data(self,e):
+        text_to_shared=convert_data_all_to_text(self.ouvrage.to_dict(), self.foration, self.pompage)
+        result = await self.share.share_text(
+            text_to_shared,
+            subject="Greeting",
+            title="Share greeting",
+        )
+    
+    async def copyCoords(self):
+        datas=self.ouvrage.to_dict()
+        await self.copy_text.set(f"{datas['coordonnee_x'],datas['coordonnee_y']}")
+        return self.page.show_dialog(ft.SnackBar(ft.Text("Coordonnées copiés avec succès")))
         
         
     # Pompage données =============================================
@@ -289,6 +339,14 @@ class DetailOuvrageView(ft.View):
            
     def _delete_ouvrage(self):
         delete_ouvrage(self.ouvrage.id)
+        try:
+            delete_foration(self.ouvrage.id)
+        except:
+            pass 
+        try:
+            delete_pompage(self.ouvrage.id)
+        except:
+            pass 
         self.page.views.pop()
         self.page.views.pop()
         asyncio.create_task(self.page.push_route("/projet/list-ouvrage"))

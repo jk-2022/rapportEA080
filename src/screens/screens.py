@@ -13,8 +13,4 @@ from .createouvragescreen.createouvrageview import CreateOuvrageView
 from .filtreouvragescreen.filtreouvrageview import FiltreOuvrageView
 from .editouvragescreen.editouvrageview import EditOuvrageView
 from .allouvragescreen.allouvrageview import AllOuvrageView
-# from .statgeneralscreen.statgeneralview import StatGeneralView
-# from .statcommunescreen.statcommuneview import StatCommuneView
-# from .statcantonscreen.statcantonview import StatCantonView
-# from .statparprojetscreen.statparprojetview import StatParProjetView
-# from .intervaldatescreen.intervaldateview import IntervalDateView
+from .dashboardscreen.dashboardview import DashboardView
