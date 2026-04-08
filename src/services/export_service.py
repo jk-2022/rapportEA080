@@ -3,15 +3,21 @@ services/export_service.py  — Exports xlsx / PDF pour EaRapport (structure ré
 """
 import os, datetime
 from typing import Optional
-from myaction.myaction_ouvrage import Ouvrage
-from myaction.myaction_foration import Foration
-from myaction.myaction_pompage import Pompage 
-from myaction.myaction_panne import Panne 
-from myaction.myaction_suivi import Suivi 
-from myaction.myaction_projet import Projet
+from myaction.myaction_ouvrage import *
+from myaction.myaction_foration import *
+from myaction.myaction_pompage import *
+from myaction.myaction_panne import *
+from myaction.myaction_suivi import *
+from myaction.myaction_projet import *
+from myaction.myaction_village import *
+from myaction.myaction_entreprise import *
+from mystorage import get_value
 
-ARCHIVE_DIR = os.path.join(os.path.dirname(__file__), "..", "assets", "archives")
-os.makedirs(ARCHIVE_DIR, exist_ok=True)
+def get_archive_path():
+    ARCHIVES_PATH=get_value("archive_path")
+    return ARCHIVES_PATH
+
+ARCHIVE_DIR=get_archive_path()
 
 def _ts(): return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 def _now(): return datetime.datetime.now().strftime("%d/%m/%Y à %H:%M")
@@ -497,10 +503,14 @@ def export_rapport_detaille_pdf(ouvrage, foration=None, pompage=None,
 def export_backup_json(appstate):
     import json
     data = {
-        "projets":     [vars(p) for p in appstate.projets],
-        "entreprises": [vars(e) for e in appstate.entreprises],
-        "villages":    [vars(v) for v in appstate.villages],
-        "ouvrages":    [vars(o) for o in appstate.all_ouvrages],
+        "projets":     [vars(p) for p in appstate.load_projets()],
+        "entreprises": [vars(e) for e in appstate.load_entreprises()],
+        "villages":    [vars(v) for v in appstate.load_villages()],
+        "ouvrages":    [vars(o) for o in appstate.load_all_ouvrages_flat()],
+        "forations":    [vars(o) for o in appstate.load_forations()],
+        "pompages":    [vars(o) for o in appstate.load_pompages()],
+        "suivis":    [vars(o) for o in load_all_suivis()],
+        "pannes":    [vars(o) for o in load_all_pannes()],
     }
     path = os.path.join(ARCHIVE_DIR, f"backup_{_ts()}.json")
     with open(path,"w",encoding="utf-8") as f: json.dump(data,f,ensure_ascii=False,indent=2)
@@ -515,17 +525,25 @@ def export_backup_xlsx(appstate):
     def _ws(name, items, fields):
         ws = wb.create_sheet(name); ws.append(fields)
         for item in items: ws.append([getattr(item,f,"") for f in fields])
-    _ws("Projets",     appstate.projets,
+    _ws("Projets",     appstate.load_projets(),
         ["id","name","title","secteurs"])
-    _ws("Entreprises", appstate.entreprises,
+    _ws("Entreprises", appstate.load_entreprises(),
         ["id","name","contact"])
-    _ws("Villages",    appstate.villages,
+    _ws("Villages",    appstate.load_villages(),
         ["id","prefecture","commune","canton","localite","coordonnee_x","coordonnee_y",
          "ressource","status","observation"])
-    _ws("Ouvrages",    appstate.all_ouvrages,
+    _ws("Ouvrages",    appstate.load_all_ouvrages_flat(),
         ["id","projet_id","prefecture","commune","canton","localite","lieu",
          "coordonnee_x","coordonnee_y","entreprise","type_ouvrage","numero_irh","annee",
          "type_energie","type_reservoir","volume_reservoir","etat","cause_panne","observation"])
+    _ws("Forations",    appstate.load_forations(),
+        ["id","ouvrage_id", "date_foration", "prof_alteration", "prof_socle", "prof_total", "prof_tube_crepine", "prof_tube_plein", "debit_soufflage", "observation"])
+    _ws("Pompages",    appstate.load_pompages(),
+        ["id","ouvrage_id", "date_pompage", "type_pompe", "cote_pompe", "temps_pompage", "debit_pompage", "niv_dynamique", "niv_statique", "observation"])
+    _ws("Pannes",    load_all_pannes(),
+        ["id","ouvrage_id", "date_signaler", "description", "solution", "observation"])
+    _ws("Suivis",    load_all_suivis(),
+        ["id","ouvrage_id", "date_reception", "type_reception", "participants", "recommandation", "observation"])
     if "Sheet" in wb.sheetnames: del wb["Sheet"]
     path = os.path.join(ARCHIVE_DIR, f"backup_{_ts()}.xlsx")
     wb.save(path); return path
@@ -535,86 +553,191 @@ def export_backup_xlsx(appstate):
 
 def import_backup_json(path, appstate):
     import json
-    from database.models import (save_projet, save_entreprise, save_village, save_ouvrage,
-                                  Projet, Entreprise, Village, Ouvrage)
+    # from database.models import (save_projet, save_entreprise, save_village, save_ouvrage,
+    #                               Projet, Entreprise, Village, Ouvrage)
     with open(path,"r",encoding="utf-8") as f: data=json.load(f)
     def _clean(cls, item):
         item.pop("id",None); item.pop("created_at",None)
         fields = set(cls.__dataclass_fields__)
         return cls(**{k:v for k,v in item.items() if k in fields})
-    for item in data.get("projets",[]): save_projet(_clean(Projet,item))
-    for item in data.get("entreprises",[]): save_entreprise(_clean(Entreprise,item))
-    for item in data.get("villages",[]): save_village(_clean(Village,item))
-    for item in data.get("ouvrages",[]): save_ouvrage(_clean(Ouvrage,item))
-    appstate.initialize()
+    for item in data.get("projets",[]): create_projet(_clean(Projet,item))
+    for item in data.get("entreprises",[]): create_entreprise(_clean(Entreprise,item))
+    for item in data.get("villages",[]): create_village(_clean(Village,item))
+    for item in data.get("ouvrages",[]): create_ouvrage(_clean(Ouvrage,item))
+    for item in data.get("forations",[]): create_foration(_clean(Ouvrage,item))
+    for item in data.get("pompages",[]): create_pompage(_clean(Ouvrage,item))
+    for item in data.get("pannes",[]): create_panne(_clean(Ouvrage,item))
+    for item in data.get("suivi",[]): create_suivi(_clean(Ouvrage,item))
+    # appstate.initialize()
 
 
 # ─── IMPORT XLSX ─────────────────────────────────────────────────────────────
 
 def import_backup_xlsx(path, appstate):
     from openpyxl import load_workbook
-    from database.models import (save_projet, save_entreprise, save_village, save_ouvrage,
-                                  Projet, Entreprise, Village, Ouvrage)
-    wb = load_workbook(path, read_only=True, data_only=True)
-    def _rows(sheet):
-        if sheet not in wb.sheetnames: return []
-        ws=wb[sheet]; rows=list(ws.iter_rows(values_only=True))
-        if not rows: return []
-        hdrs=[str(h).strip() if h else "" for h in rows[0]]
-        return [{hdrs[i]:(row[i] if i<len(row) else None) for i in range(len(hdrs))}
-                for row in rows[1:] if any(v is not None for v in row)]
+
+    wb   = load_workbook(path, read_only=True, data_only=True)
+    conn = connected_db()
+    errors = []
+
+    def _rows(sheet_name):
+        """Lit une feuille et retourne une liste de dicts colonne→valeur."""
+        if sheet_name not in wb.sheetnames:
+            return []
+        ws   = wb[sheet_name]
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            return []
+        headers = [str(h).strip() if h is not None else "" for h in rows[0]]
+        return [
+            {headers[i]: (row[i] if i < len(row) else None)
+             for i in range(len(headers))}
+            for row in rows[1:]
+            if any(v is not None for v in row)
+        ]
+
     def _s(v): return str(v).strip() if v is not None else ""
     def _f(v):
         try: return float(v) if v is not None else 0.0
         except: return 0.0
-    errors=[]
+    def _i(v):
+        """Entier ou None."""
+        try: return int(v) if v is not None else None
+        except: return None
+
+    # ── Projets ──────────────────────────────────────────────────────────────
     for r in _rows("Projets"):
         try:
-            p=Projet(name=_s(r.get("name")),title=_s(r.get("title")),secteurs=_s(r.get("secteurs")))
-            if p.name: save_projet(p)
-        except Exception as e: errors.append(f"Projet: {e}")
+            conn.execute("""
+                INSERT OR REPLACE INTO projets (id, name, title, secteurs, created_at)
+                VALUES (?,?,?,?,?)
+            """, (_i(r.get("id")), _s(r.get("name")), _s(r.get("title")),
+                  _s(r.get("secteurs")), _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Projet id={r.get('id')}: {e}")
+
+    # ── Entreprises ───────────────────────────────────────────────────────────
     for r in _rows("Entreprises"):
         try:
-            e=Entreprise(name=_s(r.get("name")),contact=_s(r.get("contact")))
-            if e.name: save_entreprise(e)
-        except Exception as ex: errors.append(f"Entreprise: {ex}")
+            conn.execute("""
+                INSERT OR REPLACE INTO entreprises (id, name, contact, created_at)
+                VALUES (?,?,?,?)
+            """, (_i(r.get("id")), _s(r.get("name")),
+                  _s(r.get("contact")), _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Entreprise id={r.get('id')}: {e}")
+
+    # ── Villages ──────────────────────────────────────────────────────────────
     for r in _rows("Villages"):
         try:
-            v=Village(prefecture=_s(r.get("prefecture")),commune=_s(r.get("commune")),
-                      canton=_s(r.get("canton")),localite=_s(r.get("localite")),
-                      coordonnee_x=_f(r.get("coordonnee_x")),coordonnee_y=_f(r.get("coordonnee_y")),
-                      ressource=_s(r.get("ressource")),status=_s(r.get("status")),
-                      observation=_s(r.get("observation")))
-            if v.localite: save_village(v)
-        except Exception as ex: errors.append(f"Village: {ex}")
-    appstate.load_projets(); appstate.load_entreprises(); appstate.load_villages()
-    proj_map  = {p.name: p for p in appstate.projets}
-    # Map ancien id -> nouveau id via le nom
-    proj_id_map={}
-    for r in _rows("Projets"):
-        old=r.get("id"); nom=_s(r.get("name")); obj=proj_map.get(nom)
-        if old is not None and obj: proj_id_map[int(old)]=obj.id
+            conn.execute("""
+                INSERT OR REPLACE INTO villages
+                (id, prefecture, commune, canton, localite,
+                 coordonnee_x, coordonnee_y, ressource, status, observation, created_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _s(r.get("prefecture")), _s(r.get("commune")),
+                  _s(r.get("canton")), _s(r.get("localite")),
+                  _f(r.get("coordonnee_x")), _f(r.get("coordonnee_y")),
+                  _s(r.get("ressource")), _s(r.get("status")),
+                  _s(r.get("observation")), _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Village id={r.get('id')}: {e}")
+
+    # ── Ouvrages ──────────────────────────────────────────────────────────────
+    # projet_id est réutilisé tel quel — c'est l'id original du fichier,
+    # qui correspond à l'id réel en base après restauration des projets ci-dessus.
     for r in _rows("Ouvrages"):
         try:
-            old_pid=r.get("projet_id")
-            o=Ouvrage(
-                projet_id=proj_id_map.get(int(old_pid)) if old_pid else None,
-                prefecture=_s(r.get("prefecture")),commune=_s(r.get("commune")),
-                canton=_s(r.get("canton")),localite=_s(r.get("localite")),
-                lieu=_s(r.get("lieu")),coordonnee_x=_f(r.get("coordonnee_x")),
-                coordonnee_y=_f(r.get("coordonnee_y")),entreprise=_s(r.get("entreprise")),
-                type_ouvrage=_s(r.get("type_ouvrage")) or "PMH",
-                numero_irh=_f(r.get("numero_irh")),annee=_s(r.get("annee")),
-                type_energie=_s(r.get("type_energie")),type_reservoir=_s(r.get("type_reservoir")),
-                volume_reservoir=_s(r.get("volume_reservoir")),
-                etat=_s(r.get("etat")) or "Bon",
-                cause_panne=_s(r.get("cause_panne")),observation=_s(r.get("observation")),
-            )
-            if o.localite or o.type_ouvrage: save_ouvrage(o)
-        except Exception as ex: errors.append(f"Ouvrage: {ex}")
-    wb.close(); appstate.initialize(); return errors
+            conn.execute("""
+                INSERT OR REPLACE INTO ouvrages
+                (id, projet_id, prefecture, commune, canton, localite, lieu,
+                 coordonnee_x, coordonnee_y, entreprise, type_ouvrage, numero_irh,
+                 annee, type_energie, type_reservoir, volume_reservoir,
+                 etat, cause_panne, observation, created_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _i(r.get("projet_id")),
+                  _s(r.get("prefecture")), _s(r.get("commune")),
+                  _s(r.get("canton")), _s(r.get("localite")),
+                  _s(r.get("lieu")),
+                  _f(r.get("coordonnee_x")), _f(r.get("coordonnee_y")),
+                  _s(r.get("entreprise")), _s(r.get("type_ouvrage")) or "PMH",
+                  _f(r.get("numero_irh")), _s(r.get("annee")),
+                  _s(r.get("type_energie")), _s(r.get("type_reservoir")),
+                  _s(r.get("volume_reservoir")),
+                  _s(r.get("etat")) or "Bon",
+                  _s(r.get("cause_panne")), _s(r.get("observation")),
+                  _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Ouvrage id={r.get('id')}: {e}")
+            
+    
+    # ── Forations ──────────────────────────────────────────────────────────────
+    # ouvrage_id est réutilisé tel quel — c'est l'id original du fichier,
+    # qui correspond à l'id réel en base après restauration des ouvrages ci-dessus.
+    for r in _rows("Forations"):
+        try:
+            conn.execute("""
+                INSERT OR REPLACE INTO foration
+                (id, ouvrage_id, date_foration, prof_alteration, prof_socle, prof_total, prof_tube_crepine, prof_tube_plein, debit_soufflage, observation, "created_at") VALUES(?,?,?,?,?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _i(r.get("ouvrage_id")),
+                  _s(r.get("date_foration")), _s(r.get("prof_alteration")),
+                  _s(r.get("prof_socle")), _s(r.get("prof_total")),
+                  _s(r.get("prof_tube_crepine")),
+                  _f(r.get("prof_tube_plein")), _f(r.get("debit_soufflage")), _s(r.get("observation")),
+                  _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Foration id={r.get('id')}: {e}")
+            
+    # ── Pompages ──────────────────────────────────────────────────────────────
+    # ouvrage_id est réutilisé tel quel — c'est l'id original du fichier,
+    # qui correspond à l'id réel en base après restauration des ouvrages ci-dessus.
+    for r in _rows("Pompages"):
+        try:
+            conn.execute("""
+                INSERT OR REPLACE INTO pompage
+                (id, ouvrage_id, date_pompage, type_pompe, cote_pompe, temps_pompage, debit_pompage, niv_dynamique, niv_statique, observation, "created_at") VALUES(?,?,?,?,?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _i(r.get("ouvrage_id")),
+                  _s(r.get("date_pompage")), _s(r.get("type_pompe")),
+                  _s(r.get("cote_pompe")), _s(r.get("temps_pompage")),
+                  _s(r.get("debit_pompage")),
+                  _f(r.get("niv_dynamique")), _f(r.get("niv_statique")), _s(r.get("observation")),
+                  _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Pompage id={r.get('id')}: {e}")
 
+    # ── Pannes ──────────────────────────────────────────────────────────────
+    for r in _rows("Pannes"):
+        try:
+            conn.execute("""
+                INSERT OR REPLACE INTO panne
+                (id, ouvrage_id, date_signaler, description, solution, observation, "created_at") VALUES(?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _s(r.get("ouvrage_id")), _s(r.get("date_signaler")),
+                    _s(r.get("description")), _s(r.get("solution")),
+                    _s(r.get("observation")), _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Panne id={r.get('id')}: {e}")
+            
+    
+    # ── Suivis ──────────────────────────────────────────────────────────────
+    for r in _rows("Suivis"):
+        try:
+            conn.execute("""
+                INSERT OR REPLACE INTO suivi
+                (id, ouvrage_id, date_reception, type_reception, participants, recommandation, observation,"created_at") VALUES(?,?,?,?,?,?,?,?)
+            """, (_i(r.get("id")), _s(r.get("ouvrage_id")), _s(r.get("date_reception")),
+                    _s(r.get("type_reception")), _s(r.get("participants")), _s(r.get("recommandation")),
+                    _s(r.get("observation")), _s(r.get("created_at"))))
+        except Exception as e:
+            errors.append(f"Suivi id={r.get('id')}: {e}")
+            
+    conn.commit()
+    conn.close()
+    wb.close()
+    # appstate.initialize()
+    return errors
 
+            
+            
 # ─── ARCHIVES ────────────────────────────────────────────────────────────────
 
 def list_archives():

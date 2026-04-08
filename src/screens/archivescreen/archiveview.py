@@ -19,12 +19,15 @@ def list_archives() -> list[dict]:
             full = os.path.join(ARCHIVE_DIR, f)
             size = os.path.getsize(full)
             mtime = os.path.getmtime(full)
+            ext=os.path.splitext(f)[1].lower()
+            if ext==".db":
+                continue
             files.append({
                 "name": f,
                 "path": full,
                 "size": size,
                 "date": datetime.fromtimestamp(mtime).strftime("%d/%m/%Y %H:%M"),
-                "ext": os.path.splitext(f)[1].lower(),
+                "ext": ext,
             })
     return files
 

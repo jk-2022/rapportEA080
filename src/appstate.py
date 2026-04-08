@@ -21,7 +21,8 @@ class AppState:
     villages:list[Village]=field(default_factory=list)
     suivis:list[Suivi]=field(default_factory=list)
     pannes:list[Panne]=field(default_factory=list)
-    entreprises: list[Entreprise] = field(default_factory=list)
+    forations: list[Foration] = field(default_factory=list)
+    pompages: list[Pompage] = field(default_factory=list)
     all_ouvrages: list[Ouvrage] = field(default_factory=list)
     villages_sans_forage: list[Village] = field(default_factory=list)
     stats: dict = field(default_factory=dict)
@@ -56,8 +57,17 @@ class AppState:
         self.pannes=load_all_pannes(self.selected_ouvrage.id)
         return self.pannes
     
+    def load_forations(self):
+        self.foration=load_all_forations()
+        return self.foration
+        
+    def load_pompages(self):
+        self.pompages=load_all_pompages()
+        return self.foration
+    
     def load_all_ouvrages_flat(self):
         self.all_ouvrages=load_all_ouvrages()
+        return self.all_ouvrages
         
     # ── Stats ─────────────────────────────────────────────────────────────────
     def load_stats(self):

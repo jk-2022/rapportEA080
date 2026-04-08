@@ -3,7 +3,7 @@ from .projetscreen.projetsview import ProjectView
 from .ouvragescreen.ouvrageview import OuvrageView
 from .listentrepriseview.listentrepriseview import ListEntrepriseView
 from .villagescreen.villageview import VillageView
-from .recapouvragescreen.recapouvrageview import RecapOuvrageView
+# from .recapouvragescreen.recapouvrageview import RecapOuvrageView
 from .detailouvragescreen.detailouvrageview import DetailOuvrageView
 from .settingscreen.settingview import SettingView
 from .aproposcreen.aproposview import AproposView

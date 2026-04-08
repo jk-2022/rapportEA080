@@ -4,7 +4,7 @@ class AcceuilCard(ft.Card):
     def __init__(self, title, img, change_view):
         super().__init__()
         self.elevation=10
-        self.height=120
+        self.height=150
         self.width=110
         
         self.content=ft.Container(

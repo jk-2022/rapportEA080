@@ -1,14 +1,14 @@
 """pages/allouvrageview.py — Tous les ouvrages + filtres avancés + export"""
-import asyncio
+# import asyncio
 
 import flet as ft
 from screens.allouvragescreen.allouvragecard import AllOuvrageCard
 from uix.custominputfield import CustomInputField
 from utils.constants import (
     PRIMARY, PRIMARY_LIGHT, SURFACE, TEXT_DARK, TEXT_GREY, BG_CARD, DANGER, SHADOW,
-    ROUTES, card_container, etat_badge, categorie_chip, empty_state,
+    ROUTES, empty_state,
 )
-from appstate import Ouvrage
+# from appstate import Ouvrage
 
 
 class AllOuvrageView(ft.View):
@@ -21,8 +21,9 @@ class AllOuvrageView(ft.View):
         self.padding = ft.Padding(0,0,0,0)
         self.appbar = self._build_appbar()
         self._counter_text = ft.Text("", size=12, color=TEXT_GREY)
-        self._list_container = ft.ListView(
-            expand=True
+        self._list_container = ft.Column(
+            expand=True,
+            scroll=ft.ScrollMode.AUTO
         )
         self.expand=True
         self.scroll=ft.ScrollMode.AUTO
@@ -34,13 +35,16 @@ class AllOuvrageView(ft.View):
         self._annee_debut=""
         self._annee_fin=""
         
-        self.all_ouvrages=self.state.all_ouvrages
+        self.all_ouvrages=self.state.load_all_ouvrages_flat()
         self.controls = self._build()
 
     def _build_appbar(self):
         return ft.AppBar(
-            title=ft.Text("Tous les Ouvrages", color="#FFFFFF", weight=ft.FontWeight.BOLD, size=18),
+            title=ft.Text("Tous les Ouvrages", color="#FFFFFF", 
+                          weight=ft.FontWeight.BOLD, size=18,
+                          ),
             bgcolor=PRIMARY,
+            color="#FFFFFF",
             actions=[
                 ft.PopupMenuButton(icon=ft.Icons.DOWNLOAD, icon_color="#FFFFFF",
                     items=[
@@ -54,7 +58,7 @@ class AllOuvrageView(ft.View):
 
     def _build(self):
         self._code_tf = CustomInputField(
-            hint_text="Rechercher (localité, lieu…)",
+            hint_text="Numéro IRH...",
             prefix_icon=ft.Icons.SEARCH, border_radius=ft.BorderRadius(8,8,8,8),
             filled=True, fill_color=ft.Colors.WHITE,
             border_color=PRIMARY_LIGHT, focused_border_color=PRIMARY,
@@ -130,7 +134,7 @@ class AllOuvrageView(ft.View):
         q=self._query.lower()
         loc=self._filter_localite.lower()
         result=[]
-        for o in self.state.all_ouvrages:
+        for o in self.all_ouvrages:
             if q and q not in str(o.numero_irh): 
                 continue
             if self._filter_type and o.type_ouvrage != self._filter_type: 
@@ -158,41 +162,26 @@ class AllOuvrageView(ft.View):
             return empty_state("Aucun ouvrage ne correspond aux filtres.", ft.Icons.WATER)
         return ft.ListView(controls=[AllOuvrageCard(state=self.state, ouvrage=o, formcontrol=self) for o in items], spacing=10, expand=True)
 
-    # def _card(self, o: Ouvrage):
-    #     proj = next((p for p in self.state.projets if p.id == o.projet_id), None)
-    #     return card_container(ft.Row([
-    #         ft.Column([
-    #             ft.Row([
-    #                 ft.Text(o.localite or "—", weight=ft.FontWeight.BOLD, color=TEXT_DARK, size=14),
-    #                 etat_badge(o.etat), categorie_chip(o.type_ouvrage),
-    #             ], spacing=6, wrap=True),
-    #             ft.Text(f"Projet : {proj.name if proj else '—'}", color=TEXT_GREY, size=12),
-    #             ft.Row([
-    #                 ft.Icon(ft.Icons.LOCATION_ON, size=12, color=TEXT_GREY),
-    #                 ft.Text(f"{o.commune} • {o.prefecture}", color=TEXT_GREY, size=12),
-    #             ], spacing=4),
-    #             ft.Text(f"Entreprise : {o.entreprise or '—'}  •  Année : {o.annee or '—'}",
-    #                     color=TEXT_GREY, size=12),
-    #         ], spacing=4, expand=True),
-    #         ft.IconButton(icon=ft.Icons.ARROW_FORWARD_IOS, icon_color=PRIMARY, icon_size=18,
-    #                       on_click=lambda _, ouv=o: self._open_detail(ouv)),
-    #     ], spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-    #     on_click=lambda _, ouv=o: self._open_detail(ouv))
 
-    # def _open_detail(self, o: Ouvrage):
-    #     print(o)
-        # self.state.selected_ouvrage = o
-        # self.state.selected_projet = next((p for p in self.state.projets if p.id == o.projet_id), None)
-        # self.state.load_foration(); self.state.load_pompage()
-        # self.state.load_pannes(); self.state.load_suivis()
-        # asyncio.create_task(self.page.push_route(f"/projet/list-ouvrage/detail-ouvrage"))
-
-    def _on_code_change(self, e): self._query=e.control.value; self._refresh_list()
-    def _on_type_change(self, e): self._filter_type=e.control.value; self._refresh_list()
-    def _on_etat_change(self, e): self._filter_etat=e.control.value; self._refresh_list()
-    def _on_loc_change(self, e):  self._filter_localite=e.control.value; self._refresh_list()
-    def _on_adeb_change(self, e): self._annee_debut=e.control.value; self._refresh_list()
-    def _on_afin_change(self, e): self._annee_fin=e.control.value; self._refresh_list()
+    def _on_code_change(self, e): 
+        self._query=e.control.value
+        self._refresh_list()
+        
+    def _on_type_change(self, e): 
+        self._filter_type=e.control.value 
+        self._refresh_list()
+    def _on_etat_change(self, e): 
+        self._filter_etat=e.control.value 
+        self._refresh_list()
+    def _on_loc_change(self, e):  
+        self._filter_localite=e.control.value
+        self._refresh_list()
+    def _on_adeb_change(self, e): 
+        self._annee_debut=e.control.value 
+        self._refresh_list()
+    def _on_afin_change(self, e): 
+        self._annee_fin=e.control.value 
+        self._refresh_list()
 
     def _reset(self, _=None):
         self._query=self._filter_type=self._filter_etat=self._filter_localite=""
@@ -203,7 +192,7 @@ class AllOuvrageView(ft.View):
 
     def _refresh_list(self):
         self._list_container.controls = self._ouvrage_list() 
-        self.update()
+        # self.update()
 
     def _export(self, fmt: str):
         from services.export_service import export_ouvrages_xlsx, export_ouvrages_pdf

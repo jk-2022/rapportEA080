@@ -9,8 +9,10 @@ class AcceuilView(ft.View):
         self.padding=0
         self.route="/"
         self.state=state
+        self.expand=True
         page_height=get_value("win_height")
         self.scroll=ft.ScrollMode.AUTO,
+        
         bar_cnt=ft.Container(height=60,
                          content=ft.Row(
                              [
@@ -23,22 +25,31 @@ class AcceuilView(ft.View):
                              ],alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                             )
                          )
-        self.grid_cont=ft.Row(
+        self.grid_cont=ft.Column(
             expand=True,
-            wrap=True,
-            spacing=5,
-            run_alignment=ft.MainAxisAlignment.END,
-            expand_loose=True,
             controls=[
-                AcceuilCard(title="Projets",img="projet.png",change_view=self.go_projet_view),
-                AcceuilCard(title="Tous les ouvrages",img="eau_home.png",change_view=self.go_allouvrage_view),
-                AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
-                AcceuilCard(title="Dashboard",img="dashboard.png",change_view=self.go_dashboard_view),
-                AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
-                AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
-                AcceuilCard(title="Villages sans forage",img="village.png",change_view=self.go_village_view),
-                AcceuilCard(title="Apropos",img="apropos.png",change_view=self.go_apropos_view),
-            ]
+                ft.Row(
+                    [
+                        AcceuilCard(title="Projets",img="projet.png",change_view=self.go_projet_view),
+                        AcceuilCard(title="Tous les ouvrages",img="eau_home.png",change_view=self.go_allouvrage_view),
+                        AcceuilCard(title="Archives",img="archive.png",change_view=self.go_archives_view),
+                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                ),
+                ft.Row(
+                    [
+                        AcceuilCard(title="Dashboard",img="dashboard.png",change_view=self.go_dashboard_view),
+                        AcceuilCard(title="Statistiques",img="stats.png",change_view=self.go_static_view),
+                        AcceuilCard(title="Liste Entreprise",img="entreprise.png",change_view=self.go_entreprise_view),
+                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                ),
+                ft.Row(
+                    [
+                        AcceuilCard(title="Villages sans forage",img="village.png",change_view=self.go_village_view),
+                        AcceuilCard(title="Apropos",img="apropos.png",change_view=self.go_apropos_view),
+                        ft.Container(height=110, width=120)
+                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                ),
+            ], scroll=ft.ScrollMode.AUTO
         )
         
         self.controls=[
@@ -50,7 +61,7 @@ class AcceuilView(ft.View):
                         bar_cnt,
                         ft.Container(
                             expand=1,
-                            height=page_height-40,
+                            # height=page_height-40,
                             image=ft.DecorationImage(
                                 src="eau_home.png",
                                 )

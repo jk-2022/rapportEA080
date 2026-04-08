@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+from typing import Optional
 import sqlite3 
 import os
 
@@ -49,10 +50,13 @@ async def init_db_suivi():
     conn.commit()
     conn.close()
 
-def load_all_suivis(ouvrage_id):
+def load_all_suivis(ouvrage_id:Optional[int]=None):
     conn=connected_db()
     cur=conn.cursor()
-    rows=cur.execute(" SELECT * FROM suivi WHERE ouvrage_id=? ORDER BY created_at DESC", (ouvrage_id,)).fetchall()
+    if ouvrage_id:
+        rows=cur.execute(" SELECT * FROM suivi WHERE ouvrage_id=? ORDER BY created_at DESC", (ouvrage_id,)).fetchall()
+    else:
+        rows=cur.execute(" SELECT * FROM suivi ORDER BY created_at DESC").fetchall()
     return [Suivi(*row) for row in rows]
 
 def load_one_suivi(suivi_id):

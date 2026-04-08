@@ -10,6 +10,7 @@ from myaction.myaction_pompage import init_db_pompage
 from myaction.myaction_foration import init_db_foration
 from myaction.myaction_suivi import init_db_suivi
 from myaction.myaction_panne import init_db_panne
+from utils.constants import TEXT_GREY, section_title
 
 class SettingView(ft.View):
     def __init__(self,state):
@@ -17,6 +18,7 @@ class SettingView(ft.View):
         self.padding = 0
         self.state=state
         self.route = "/settings"
+        self._import_mode = "json"
         # self.titlefield=ft.TextField(expand=True, height=40, value="basedb")
 
         self.controls.append(ft.SafeArea(
@@ -37,9 +39,69 @@ class SettingView(ft.View):
                             padding=10,
                             content=ft.Column(
                                 [
-                                    
-                                    ft.ListTile(title=ft.Text("Sauvegardez toutes vos données"),leading=ft.Icon(ft.Icons.UPLOAD), on_click=lambda e: self.showExport()),
-                                    ft.ListTile(title=ft.Text("Importez toutes vos données"),leading=ft.Icon(ft.Icons.DOWNLOAD), on_click= self.handle_pick_files)
+                                    section_title("📥 Importer des données"),
+                                    ft.Text(
+                                        "Restaurez vos données depuis un fichier de sauvegarde "
+                                        "JSON ou XLSX précédemment exporté depuis EaRapport. "
+                                        "Les données existantes sont conservées (import additif).",
+                                        color=TEXT_GREY, size=13,
+                                    ),
+                                    ft.Row(
+                                        [
+                                            
+                                            # ft.ListTile(title=ft.Text("Importez toutes vos données"),
+                                            #             leading=ft.Icon(ft.Icons.DOWNLOAD), on_click= self.handle_pick_files),
+                                            ft.FilledButton(
+                                                "Sélectionner JSON",
+                                                icon=ft.Icons.UPLOAD_FILE,
+                                                on_click=self.handle_pick_files,
+                                                expand=True
+                                            ),
+                                            ft.FilledButton(
+                                                "Sélectionner EXCEL",
+                                                icon=ft.Icons.UPLOAD_FILE,
+                                                on_click=self._pick_import_file,
+                                                expand=True
+                                            )
+                                            ]),
+                                    ft.Container(
+                                        content=ft.Column([
+                                            ft.Text(
+                                                "📄 JSON — Toutes les données dans un seul fichier.\n"
+                                                "📊 XLSX — 4 feuilles : Projets, Entreprises, Villages, Ouvrages.",
+                                                size=11, color=TEXT_GREY,
+                                            ),
+                                        ]),
+                                        bgcolor="#FFFDE7",
+                                        border_radius=ft.BorderRadius(8, 8, 8, 8),
+                                        padding=ft.Padding(10, 8, 10, 8),
+                                    ),
+                                    section_title("💾 Sauvegarde des données"),
+                                    ft.Text(
+                                        "Exportez toutes vos données (projets, ouvrages, entreprises, "
+                                        "villages) dans un fichier de sauvegarde.",
+                                        color=TEXT_GREY, size=13,
+                                    ),
+                                    ft.FilledButton(
+                                            "Exporter en JSON DB",
+                                            icon=ft.Icons.CODE, 
+                                            expand=True,
+                                            on_click=lambda e: self.showExport()),
+                                    ft.Row([
+                                        ft.FilledButton(
+                                            "Exporter JSON state",
+                                            icon=ft.Icons.CODE,
+                                            on_click=lambda _: self._export_second("json"),
+                                            expand=True,
+                                        ),
+                                        ft.FilledButton(
+                                            "Exporter en XLSX",
+                                            icon=ft.Icons.TABLE_CHART,
+                                            on_click=lambda _: self._export_second("xlsx"),
+                                            expand=True,
+                                            style=ft.ButtonStyle(bgcolor="#1B5E20"),
+                                        ),
+                                    ], spacing=8),
                                 ]
                             )
                         )
@@ -74,8 +136,7 @@ class SettingView(ft.View):
                                                   initial_directory=init_path
                                                   )
         self.export_base(file_path)
-
-    
+        
     def showExport(self):
         titlefield=ft.TextField(expand=True, height=40,value="basedb")
         self.dlg_modal = ft.AlertDialog(
@@ -90,6 +151,135 @@ class SettingView(ft.View):
             on_dismiss=lambda e: print("Modal dialog dismissed!"),
         )
         self.page.show_dialog(self.dlg_modal)
+        
+    def _export_second(self, fmt: str):
+        from services.export_service import export_backup_json, export_backup_xlsx
+        try:
+            path = export_backup_json(self.state) if fmt == "json" \
+                   else export_backup_xlsx(self.state)
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("Sauvegarde réussie ✅"),
+                content=ft.Column([
+                    ft.Text("Fichier enregistré dans les archives :"),
+                    ft.Text(path, size=11, color=TEXT_GREY, selectable=True),
+                ], spacing=4, tight=True),
+                actions=[
+                    ft.TextButton("Voir les archives",
+                                  on_click= self.page_go_archives
+                                  ),
+                    ft.TextButton("OK", on_click=lambda _: self.page.pop_dialog()),
+                ],
+            ))
+        except Exception as ex:
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("Erreur de sauvegarde"),
+                content=ft.Text(str(ex)),
+                actions=[ft.TextButton("OK", on_click=lambda _: self.page.pop_dialog())],
+            ))
+            
+        # ── Import — sélection du fichier ────────────────────────────────────────
+
+    async def _pick_import_file(self, e: ft.Event[ft.Button]):
+        extensions = ["xlsx", "xls"]
+
+        files = await ft.FilePicker().pick_files(allowed_extensions=extensions)
+        path = (
+            ", ".join(map(lambda f: f.path, files)) if files else "Cancelled!"
+            )
+        if path=="Cancelled!":
+            return
+        fmt  = ""
+
+        # Boîte de confirmation avant import
+        self.page.show_dialog(ft.AlertDialog(
+            title=ft.Text(f"Importer ce fichier {fmt.upper()} ?"),
+            content=ft.Column([
+                ft.Text(
+                    "Les données du fichier seront ajoutées à la base existante "
+                    "(les enregistrements actuels sont conservés).",
+                    color=TEXT_GREY, size=13,
+                ),
+                ft.Container(
+                    content=ft.Text(
+                        f"{path}", size=12,
+                        weight=ft.FontWeight.BOLD,
+                        color="#1565C0",
+                    ),
+                    bgcolor="#E3F2FD",
+                    border_radius=ft.BorderRadius(6, 6, 6, 6),
+                    padding=ft.Padding(10, 6, 10, 6),
+                ),
+            ], spacing=10, tight=True),
+            actions=[
+                ft.TextButton("Annuler", on_click=lambda _: self.page.pop_dialog()),
+                ft.FilledButton(
+                    "Importer",
+                    on_click=lambda _: (
+                        self.page.pop_dialog(),
+                        self._do_import(path, fmt),
+                    ),
+                ),
+            ],
+        ))
+    
+    def _do_import(self, path: str, fmt: str):
+        try:
+            if fmt == "json":
+                from services.export_service import import_backup_json
+                import_backup_json(path, self.state)
+                errors = []
+            else:
+                from services.export_service import import_backup_xlsx
+                errors = import_backup_xlsx(path, self.state)
+
+            if not errors:
+                self.page.show_dialog(ft.AlertDialog(
+                    title=ft.Text("Import réussi ✅"),
+                    content=ft.Text(
+                        "Toutes les données ont été importées avec succès.\n"
+                        "La base de données a été mise à jour.",
+                    ),
+                    actions=[
+                        ft.TextButton("OK", on_click=lambda _: self.page.pop_dialog()),
+                    ],
+                ))
+            else:
+                dialog=ft.AlertDialog(
+                    title=ft.Text("Import terminé avec avertissements ⚠️"),
+                    content=ft.Column([
+                            ft.Text(
+                                f"Import terminé mais {len(errors)} ligne(s) ignorée(s) :",
+                                color=TEXT_GREY, size=13,
+                            ),
+                            ft.Container(
+                                content=ft.Column([
+                                    ft.Text(f"• {err}", size=11, color="#B71C1C")
+                                    for err in errors[:10]  # Max 10 erreurs affichées
+                                ] + ([ft.Text(f"… et {len(errors)-10} autre(s)", size=11,
+                                              color=TEXT_GREY)]
+                                     if len(errors) > 10 else []),
+                                    spacing=4,
+                                ),
+                                bgcolor="#FFEBEE",
+                                border_radius=ft.BorderRadius(8, 8, 8, 8),
+                                padding=ft.Padding(10, 8, 10, 8),
+                            ),
+                        ], spacing=8, width=300),
+                        actions=[
+                            ft.TextButton("OK", on_click=lambda _: self.page.pop_dialog()),
+                        ],
+                    )
+                self.page.show_dialog(dialog)
+        except Exception as ex:
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("Erreur d'import"),
+                content=ft.Column([
+                    ft.Text("Une erreur est survenue lors de l'import :", color=TEXT_GREY, size=12),
+                    ft.Text(str(ex), size=12, color="#B71C1C"),
+                ], spacing=6, tight=True),
+                actions=[ft.TextButton("OK", on_click=lambda _: self.page.pop_dialog())],
+            ))
+
     
     def show_reset(self):
         self.dlg_modal = ft.AlertDialog(
@@ -150,5 +340,10 @@ class SettingView(ft.View):
             set_value('theme','ThemeMode.DARK')
         self.page.update()
 
+    async def page_go_archives(self):
+        self.page.pop_dialog()
+        await self.page.push_route("/archive")
+        
+        
     def close_dlg(self):
         self.page.pop_dialog()

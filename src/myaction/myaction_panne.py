@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+from typing import Optional
 import sqlite3 
 import os
 
@@ -43,10 +44,19 @@ async def init_db_panne():
     conn.commit()
     conn.close()
 
-def load_all_pannes(ouvrage_id):
+# def load_all_pannes(ouvrage_id):
+#     conn=connected_db()
+#     cur=conn.cursor()
+#     rows=cur.execute(" SELECT * FROM panne WHERE ouvrage_id=? ORDER BY created_at DESC", (ouvrage_id,)).fetchall()
+#     return [Panne(*row) for row in rows]
+
+def load_all_pannes(ouvrage_id:Optional[int]=None):
     conn=connected_db()
     cur=conn.cursor()
-    rows=cur.execute(" SELECT * FROM panne WHERE ouvrage_id=? ORDER BY created_at DESC", (ouvrage_id,)).fetchall()
+    if ouvrage_id:
+        rows=cur.execute(" SELECT * FROM panne WHERE ouvrage_id=? ORDER BY created_at DESC", (ouvrage_id,)).fetchall()
+    else:
+        rows=cur.execute(" SELECT * FROM panne ORDER BY created_at DESC").fetchall()
     return [Panne(*row) for row in rows]
 
 def load_one_panne(panne_id):

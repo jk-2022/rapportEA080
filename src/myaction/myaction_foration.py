@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+from typing import Optional
 import sqlite3 
 import os
 
@@ -50,6 +51,15 @@ async def init_db_foration():
         ''')
     conn.commit()
     conn.close()
+    
+def load_all_forations(projet_id:Optional[int]=None):
+    conn=connected_db()
+    cur=conn.cursor()
+    if projet_id:
+        rows=cur.execute(" SELECT * FROM foration WHERE projet_id=? ORDER BY created_at DESC", (projet_id,)).fetchall()
+    else:
+        rows=cur.execute(" SELECT * FROM foration ORDER BY created_at DESC").fetchall()
+    return [Foration(*row) for row in rows]
 
 def load_one_foration(ouvrage_id):
     conn=connected_db()

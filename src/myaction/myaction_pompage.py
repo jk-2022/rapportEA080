@@ -1,4 +1,5 @@
 from dataclasses import dataclass 
+from typing import Optional
 import sqlite3 
 import os
 
@@ -51,11 +52,15 @@ async def init_db_pompage():
     conn.commit()
     conn.close()
 
-# def load_all_pompage(projet_id):
-#     conn=connected_db()
-#     cur=conn.cursor()
-#     rows=cur.execute(" SELECT * FROM pompage WHERE id=? ORDER BY created_at DESC", (projet_id,)).fetchall()
-#     return [Pompage(*row) for row in rows]
+    
+def load_all_pompages(projet_id:Optional[int]=None):
+    conn=connected_db()
+    cur=conn.cursor()
+    if projet_id:
+        rows=cur.execute(" SELECT * FROM pompage WHERE projet_id=? ORDER BY created_at DESC", (projet_id,)).fetchall()
+    else:
+        rows=cur.execute(" SELECT * FROM pompage ORDER BY created_at DESC").fetchall()
+    return [Pompage(*row) for row in rows]
 
 def load_one_pompage(ouvrage_id):
     conn=connected_db()
