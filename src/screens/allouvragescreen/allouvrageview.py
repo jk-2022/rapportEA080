@@ -5,17 +5,17 @@ import flet as ft
 from screens.allouvragescreen.allouvragecard import AllOuvrageCard
 from uix.custominputfield import CustomInputField
 from utils.constants import (
-    PRIMARY, PRIMARY_LIGHT, SURFACE, TEXT_DARK, TEXT_GREY, BG_CARD, DANGER, SHADOW,
+    PRIMARY, PRIMARY_LIGHT, SURFACE, TEXT_GREY, BG_CARD, DANGER, SHADOW,
     ROUTES, empty_state,
 )
-# from appstate import Ouvrage
-
 
 class AllOuvrageView(ft.View):
     def __init__(self, state):
         super().__init__()
         self.route="/allouvrage"
         self.state = state
+        
+        self.all_ouvrages=self.state.load_all_ouvrages_flat()
         
         self.bgcolor = SURFACE
         self.padding = ft.Padding(0,0,0,0)
@@ -35,28 +35,6 @@ class AllOuvrageView(ft.View):
         self._annee_debut=""
         self._annee_fin=""
         
-        self.all_ouvrages=self.state.load_all_ouvrages_flat()
-        self.controls = self._build()
-
-    def _build_appbar(self):
-        return ft.AppBar(
-            title=ft.Text("Tous les Ouvrages", color="#FFFFFF", 
-                          weight=ft.FontWeight.BOLD, size=18,
-                          ),
-            bgcolor=PRIMARY,
-            color="#FFFFFF",
-            actions=[
-                ft.PopupMenuButton(icon=ft.Icons.DOWNLOAD, icon_color="#FFFFFF",
-                    items=[
-                        ft.PopupMenuItem(ft.Text("Exporter en xlsx"), icon=ft.Icons.TABLE_CHART,
-                                         on_click=lambda _: self._export("xlsx")),
-                        ft.PopupMenuItem(ft.Text("Exporter en PDF"),  icon=ft.Icons.PICTURE_AS_PDF,
-                                         on_click=lambda _: self._export("pdf")),
-                    ]),
-            ],
-        )
-
-    def _build(self):
         self._code_tf = CustomInputField(
             hint_text="Numéro IRH...",
             prefix_icon=ft.Icons.SEARCH, border_radius=ft.BorderRadius(8,8,8,8),
@@ -69,14 +47,16 @@ class AllOuvrageView(ft.View):
                     [ft.dropdown.Option(c) for c in ["PMH","PEA","AEP","PMH_AEP"]],
             border_color=PRIMARY_LIGHT, focused_border_color=PRIMARY,
             expand=True, height=50, 
-            on_text_change=self._on_type_change, text_size=12
+            on_text_change=self._on_type_change, 
+            text_size=12
             )
         self._etat_dd = ft.Dropdown(hint_text="État", value="",
             options=[ft.dropdown.Option("","Tous états")]+
                     [ft.dropdown.Option(e) for e in ["Bon état","En panne","Abandonnée"]],
             border_color=PRIMARY_LIGHT, focused_border_color=PRIMARY,
             expand=True, height=50, 
-            on_text_change=self._on_etat_change, text_size=12
+            on_text_change=lambda e: self._on_etat_change(e), 
+            text_size=12
             )
         self._loc_tf = CustomInputField(hint_text="Filtrer par localité / préfecture / commune…",
             prefix_icon=ft.Icons.LOCATION_ON, border_radius=ft.BorderRadius(8,8,8,8),
@@ -98,7 +78,7 @@ class AllOuvrageView(ft.View):
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=self._on_afin_change, height=48, text_size=14, expand=True, max_length=4
             )
-
+        
         filter_panel = ft.Container(
             content=ft.Column([
                 self._code_tf,
@@ -127,8 +107,31 @@ class AllOuvrageView(ft.View):
             ], vertical_alignment=ft.CrossAxisAlignment.CENTER),
             padding=ft.Padding(16,4,8,4), bgcolor=SHADOW,
         )
-        self._list_container.controls = self._ouvrage_list()
-        return [filter_panel, counter_row, self._list_container]
+        
+        self.controls = [
+            filter_panel, 
+            counter_row, 
+            self._list_container
+        ]
+        self._refresh_list()
+
+    def _build_appbar(self):
+        return ft.AppBar(
+            title=ft.Text("Tous les Ouvrages", color="#FFFFFF", 
+                          weight=ft.FontWeight.BOLD, size=18,
+                          ),
+            bgcolor=PRIMARY,
+            color="#FFFFFF",
+            actions=[
+                ft.PopupMenuButton(icon=ft.Icons.DOWNLOAD, icon_color="#FFFFFF",
+                    items=[
+                        ft.PopupMenuItem(ft.Text("Exporter en xlsx"), icon=ft.Icons.TABLE_CHART,
+                                         on_click=lambda _: self._export("xlsx")),
+                        ft.PopupMenuItem(ft.Text("Exporter en PDF"),  icon=ft.Icons.PICTURE_AS_PDF,
+                                         on_click=lambda _: self._export("pdf")),
+                    ]),
+            ],
+        )
 
     def _filtered(self):
         q=self._query.lower()
@@ -155,12 +158,14 @@ class AllOuvrageView(ft.View):
             result.append(o)
         return result
 
-    def _ouvrage_list(self):
-        items = self._filtered()
-        self._counter_text.value = f"{len(items)} ouvrage(s)"
-        if not items:
-            return empty_state("Aucun ouvrage ne correspond aux filtres.", ft.Icons.WATER)
-        return ft.ListView(controls=[AllOuvrageCard(state=self.state, ouvrage=o, formcontrol=self) for o in items], spacing=10, expand=True)
+    # def _ouvrage_list(self):
+    #     items = self._filtered()
+    #     self._counter_text.value = f"{len(items)} ouvrage(s)"
+    #     if not items:
+    #         return empty_state("Aucun ouvrage ne correspond aux filtres.", ft.Icons.WATER)
+    #     return ft.ListView(
+    #         controls=[AllOuvrageCard(state=self.state, ouvrage=o, formcontrol=self) for o in items], 
+    #                        spacing=10, expand=True)
 
 
     def _on_code_change(self, e): 
@@ -191,7 +196,12 @@ class AllOuvrageView(ft.View):
         self._refresh_list()
 
     def _refresh_list(self):
-        self._list_container.controls = self._ouvrage_list() 
+        items = self._filtered()
+        self._counter_text.value = f"{len(items)} ouvrage(s)"
+        if not items:
+            return empty_state("Aucun ouvrage ne correspond aux filtres.", ft.Icons.WATER)
+        self._list_container.controls =[AllOuvrageCard(state=self.state, ouvrage=o, formcontrol=self) for o in items]
+        # self._list_container.controls = self._ouvrage_list() 
         # self.update()
 
     def _export(self, fmt: str):

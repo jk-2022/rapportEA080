@@ -2,14 +2,7 @@ from dataclasses import dataclass, field
 import flet as ft
 
 from myaction.myaction_main import get_stats
-from myaction.myaction_panne import Panne, load_all_pannes
-from myaction.myaction_projet import *
-from myaction.myaction_ouvrage import *
-from myaction.myaction_entreprise import *
-from myaction.myaction_foration import *
-from myaction.myaction_pompage import *
-from myaction.myaction_suivi import Suivi, load_all_suivis
-from myaction.myaction_village import Village, load_all_villages
+from myaction.db_actions import *
 
 @ft.observable
 @dataclass

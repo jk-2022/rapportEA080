@@ -2,7 +2,7 @@ import flet as ft
 from datetime import datetime
 from donnees import *
 
-from myaction.myaction_foration import create_foration
+from myaction.db_actions import create_foration
 from uix.custominputnumberfield import CustomInputNumberField
 
 from uix.custominputfield import CustomInputField

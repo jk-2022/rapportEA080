@@ -2,14 +2,7 @@ import flet as ft
 from myaction.myaction_main import export_sqlite_to_json, import_json_to_sqlite, reset_my_db
 from mystorage import *
 
-from myaction.myaction_village import init_db_village
-from myaction.myaction_entreprise import init_db_entreprise
-from myaction.myaction_ouvrage import init_db_ouvrage, ajouter_colonne_si_absente
-from myaction.myaction_projet import init_db
-from myaction.myaction_pompage import init_db_pompage
-from myaction.myaction_foration import init_db_foration
-from myaction.myaction_suivi import init_db_suivi
-from myaction.myaction_panne import init_db_panne
+from myaction.db_actions import init_db
 from utils.constants import TEXT_GREY, section_title
 
 class SettingView(ft.View):
@@ -306,14 +299,6 @@ class SettingView(ft.View):
     async def reset_db(self):
         await reset_my_db()
         await init_db()
-        await init_db_entreprise()
-        await init_db_ouvrage()
-        await ajouter_colonne_si_absente()
-        await init_db_pompage()
-        await init_db_foration()
-        await init_db_panne()
-        await init_db_village()
-        await init_db_suivi()
         self.page.pop_dialog()
         self.page.show_dialog(ft.SnackBar(ft.Text("Vous avez réinitialiser votre application avec succès")))
 

@@ -3,14 +3,7 @@ services/export_service.py  — Exports xlsx / PDF pour EaRapport (structure ré
 """
 import os, datetime
 from typing import Optional
-from myaction.myaction_ouvrage import *
-from myaction.myaction_foration import *
-from myaction.myaction_pompage import *
-from myaction.myaction_panne import *
-from myaction.myaction_suivi import *
-from myaction.myaction_projet import *
-from myaction.myaction_village import *
-from myaction.myaction_entreprise import *
+from myaction.db_actions import *
 from mystorage import get_value
 
 def get_archive_path():

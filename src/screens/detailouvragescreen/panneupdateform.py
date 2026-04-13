@@ -1,6 +1,6 @@
 import flet as ft
 from datetime import datetime
-from myaction.myaction_panne import Panne, update_panne
+from myaction.db_actions import Panne, update_panne
 from uix.custominputfield import CustomInputField
 
 # @ft.control

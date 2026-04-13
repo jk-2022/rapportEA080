@@ -1,14 +1,6 @@
-# import asyncio
+import asyncio
 import flet as ft
-from myaction.myaction_village import init_db_village
-from myaction.myaction_entreprise import init_db_entreprise
-from myaction.myaction_ouvrage import init_db_ouvrage, ajouter_colonne_si_absente
-from myaction.myaction_projet import init_db
-from myaction.myaction_pompage import init_db_pompage
-from myaction.myaction_foration import init_db_foration
-from myaction.myaction_suivi import init_db_suivi
-from myaction.myaction_panne import init_db_panne
-# import asyncio
+from myaction.db_actions import init_db
 
 from appstate import AppState
 from screens.acceuilscreen.drawer import page_drawer
@@ -23,7 +15,7 @@ async def main(page: ft.Page):
     page.padding=0
     page.expand=True
     page.scroll = ft.ScrollMode.ADAPTIVE
-    set_value("win_height",page.height)
+    # set_value("win_height",page.height)
     
     storage_paths = ft.StoragePaths()
 
@@ -109,7 +101,6 @@ async def main(page: ft.Page):
             doc_dir = await storage_paths.get_application_documents_directory()
             return doc_dir
         else:
-            # doc_dir = "/storage/emulated/0/Documents/rapea"
             doc_dir= await storage_paths.get_external_storage_directory()
             return doc_dir
 
@@ -119,15 +110,15 @@ async def main(page: ft.Page):
             base_dir = os.path.join(doc_dir,'basedb')
             if not os.path.exists(base_dir):
                 os.makedirs(base_dir, exist_ok=True)
+            set_value("base_path", base_dir)
             return base_dir 
-        else:
-            print('pas créer')
 
     async def archive_path():
         doc_dir = await get_absolute_path()
         base_dir = os.path.join(doc_dir,'archives')
         if not os.path.exists(base_dir):
             os.makedirs(base_dir, exist_ok=True)
+        set_value("archive_path", base_dir)
         return base_dir 
 
     async def image_path():
@@ -135,23 +126,13 @@ async def main(page: ft.Page):
         base_dir = os.path.join(doc_dir,'images')
         if not os.path.exists(base_dir):
             os.makedirs(base_dir, exist_ok=True)
+        set_value("image_path",base_dir)
         return base_dir 
     
-    basedb_path= await base_path()
-    doc_path= await archive_path()
-    images_path= await image_path()
-    set_value("base_path",basedb_path)
-    set_value("archive_path",doc_path)
-    set_value("image_path",images_path)
-    await init_db()
-    await init_db_entreprise()
-    await init_db_ouvrage()
-    await ajouter_colonne_si_absente()
-    await init_db_pompage()
-    await init_db_foration()
-    await init_db_panne()
-    await init_db_village()
-    await init_db_suivi()
+    # await base_path()
+    # await archive_path()
+    # await image_path()
+    # await init_db()
 
     page.on_route_change=route_change
     page.on_view_pop= view_pop

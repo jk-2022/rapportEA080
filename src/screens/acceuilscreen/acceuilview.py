@@ -10,8 +10,8 @@ class AcceuilView(ft.View):
         self.route="/"
         self.state=state
         self.expand=True
-        page_height=get_value("win_height")
-        self.scroll=ft.ScrollMode.AUTO,
+        # page_height=get_value("win_height")
+        # self.scroll=ft.ScrollMode.AUTO
         
         bar_cnt=ft.Container(height=60,
                          content=ft.Row(
@@ -60,8 +60,8 @@ class AcceuilView(ft.View):
                     controls=[
                         bar_cnt,
                         ft.Container(
-                            expand=1,
-                            # height=page_height-40,
+                            # expand=1,
+                            height=200,
                             image=ft.DecorationImage(
                                 src="eau_home.png",
                                 )
@@ -79,6 +79,7 @@ class AcceuilView(ft.View):
                                         spacing=10,
                                         expand=True,
                                         alignment=ft.MainAxisAlignment.CENTER,
+                                        scroll=ft.ScrollMode.AUTO,
                                         controls=[
                                             ft.Container(
                                              height=70,

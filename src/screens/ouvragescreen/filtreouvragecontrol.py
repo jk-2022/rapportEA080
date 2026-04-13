@@ -2,7 +2,8 @@ import asyncio
 import flet as ft
 import os
 
-from myaction.myaction_main import get_all_localites, get_filtered_ouvrages, get_one_ouvrages, load_all_data_for_csv
+from myaction.myaction_main import get_filtered_ouvrages, load_all_data_for_csv
+from myaction.db_actions import get_one_ouvrage
 from screens.ouvragescreen.excelfilterouvrage import OuvrageExcelExporter
 from .datatable import Mytable, tb
 
@@ -44,19 +45,6 @@ class FiltreOuvrageControl(ft.Column):
                 ft.dropdown.Option("Abandonné")],
             on_text_change=lambda e: self.update_list()
             )
-        
-        # self.suivi = ft.Dropdown(
-        #     label="Suivi",
-        #     height=40,
-        #     expand=True,
-        #     text_size=12,
-        #     options=[
-        #         ft.dropdown.Option("moi"), 
-        #         ft.dropdown.Option("autre")
-        #         ],
-        #     on_text_change=lambda e: self.update_list()
-        #     )
-
         
         self.ouvrage_column_list = ft.Column(
             expand=1,
@@ -140,7 +128,7 @@ class FiltreOuvrageControl(ft.Column):
         self.update()
 
     def open_ouvrage_detail(self,ouvrage):
-        ouvrage=get_one_ouvrages(ouvrage['id'])
+        ouvrage=get_one_ouvrage(ouvrage['id'])
         self.state.selected_ouvrage=ouvrage[0]
         asyncio.create_task(self.page.push_route("/projet/list-ouvrage/recap-ouvrage"))
 

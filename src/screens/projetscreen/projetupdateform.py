@@ -1,6 +1,6 @@
 import flet as ft
 from uix.custominputfield import CustomInputField
-from myaction.myaction_projet import update_projet, Projet
+from myaction.db_actions import update_projet, Projet
 
 # @ft.control
 class ProjetUpdateForm(ft.Container):

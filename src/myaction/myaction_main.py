@@ -1,10 +1,8 @@
 import os
-import json
 import sqlite3
 from collections import defaultdict
-import sqlite3 
-
-from myaction.myaction_ouvrage import Ouvrage
+import json
+from myaction.db_actions import Ouvrage
 from mystorage import get_value 
 
 NAME_DB="rapport.db"
@@ -49,74 +47,74 @@ def load_all_data_for_csv(ouvrage_id):
         all_data[table]=data
     return all_data
 
-def load_all_data(ouvrage_id):
-    conn = connected_db()
-    c=conn.cursor()
-    all_data={
-        'ouvrages':[],
-        'foration':[],
-        'pompage':[]
-    }
-    c.execute(f"SELECT * FROM ouvrages WHERE id=?",(ouvrage_id,))
-    rows = c.fetchall()
-    col_names = [description[0] for description in c.description]
-    data = [dict(zip(col_names, row)) for row in rows]
-    all_data["ouvrages"]=data
-    tables=['foration', 'pompage']
-    for table in tables:
-        c.execute(f"SELECT * FROM {table} WHERE ouvrage_id=?",(ouvrage_id,))
-        rows = c.fetchall()
-        col_names = [description[0] for description in c.description]
-        data = [dict(zip(col_names, row)) for row in rows]
-        all_data[table]=data
-    return all_data
+# def load_all_data(ouvrage_id):
+#     conn = connected_db()
+#     c=conn.cursor()
+#     all_data={
+#         'ouvrages':[],
+#         'foration':[],
+#         'pompage':[]
+#     }
+#     c.execute(f"SELECT * FROM ouvrages WHERE id=?",(ouvrage_id,))
+#     rows = c.fetchall()
+#     col_names = [description[0] for description in c.description]
+#     data = [dict(zip(col_names, row)) for row in rows]
+#     all_data["ouvrages"]=data
+#     tables=['foration', 'pompage']
+#     for table in tables:
+#         c.execute(f"SELECT * FROM {table} WHERE ouvrage_id=?",(ouvrage_id,))
+#         rows = c.fetchall()
+#         col_names = [description[0] for description in c.description]
+#         data = [dict(zip(col_names, row)) for row in rows]
+#         all_data[table]=data
+#     return all_data
 
-def get_one_ouvrages(ouvrage_id):
-    conn=connected_db()
-    cur=conn.cursor()
-    rows=cur.execute(" SELECT * FROM ouvrages WHERE id=? ", (ouvrage_id,)).fetchall()
-    return [Ouvrage(*row) for row in rows]
+# def get_one_ouvrages(ouvrage_id):
+#     conn=connected_db()
+#     cur=conn.cursor()
+#     rows=cur.execute(" SELECT * FROM ouvrages WHERE id=? ", (ouvrage_id,)).fetchall()
+#     return [Ouvrage(*row) for row in rows]
 
-def recuperer_projet_id(name):
-    conn = connected_db()
-    c = conn.cursor()
-    c.execute(""" SELECT id FROM projets WHERE name=? """,(name,))
-    projet_id = c.fetchone()
-    return projet_id[0]
+# def recuperer_projet_id(name):
+#     conn = connected_db()
+#     c = conn.cursor()
+#     c.execute(""" SELECT id FROM projets WHERE name=? """,(name,))
+#     projet_id = c.fetchone()
+#     return projet_id[0]
 
-def recuperer_one_projet(projet_id):
-    conn = connected_db()
-    c = conn.cursor()
-    c.execute(""" SELECT * FROM projets WHERE id=? """, (projet_id,))
-    projet = c.fetchall()
-    if projet:
-        col_names = [description[0] for description in c.description]
-        data = [dict(zip(col_names, row)) for row in projet]
-        return data
-    return projet
+# def recuperer_one_projet(projet_id):
+#     conn = connected_db()
+#     c = conn.cursor()
+#     c.execute(""" SELECT * FROM projets WHERE id=? """, (projet_id,))
+#     projet = c.fetchall()
+#     if projet:
+#         col_names = [description[0] for description in c.description]
+#         data = [dict(zip(col_names, row)) for row in projet]
+#         return data
+#     return projet
 
-def recuperer_projet_name(projet_id):
-    conn = connected_db()
-    c = conn.cursor()
-    c.execute(""" SELECT name FROM projets WHERE id=? """,(projet_id,))
-    projet_name = c.fetchone()
-    # print(type(projet_name[0]))
-    return projet_name[0]
+# def recuperer_projet_name(projet_id):
+#     conn = connected_db()
+#     c = conn.cursor()
+#     c.execute(""" SELECT name FROM projets WHERE id=? """,(projet_id,))
+#     projet_name = c.fetchone()
+#     # print(type(projet_name[0]))
+#     return projet_name[0]
 
 
-def recuperer_liste_ouvrage_by_projet(projet_id):
-    conn = connected_db()
-    try:
-        c = conn.cursor()
-        c.execute(""" SELECT * FROM ouvrage WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
-        ouvrages = c.fetchall()
-        if ouvrages:
-            col_names = [description[0] for description in c.description]
-            data = [dict(zip(col_names, row)) for row in ouvrages]
-            return data
-        return ouvrages
-    except Exception as e:
-        print(e)
+# def recuperer_liste_ouvrage_by_projet(projet_id):
+#     conn = connected_db()
+#     try:
+#         c = conn.cursor()
+#         c.execute(""" SELECT * FROM ouvrage WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
+#         ouvrages = c.fetchall()
+#         if ouvrages:
+#             col_names = [description[0] for description in c.description]
+#             data = [dict(zip(col_names, row)) for row in ouvrages]
+#             return data
+#         return ouvrages
+#     except Exception as e:
+#         print(e)
 
 def get_all_projets():
     conn = connected_db()
@@ -133,15 +131,15 @@ def get_all_projets():
     return projets
 
 
-def get_all_localites(projet_id):
-    conn = connected_db()
-    try:
-        c = conn.cursor()
-        c.execute(""" SELECT DISTINCT localite FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
-        localites = c.fetchall()
-        return localites
-    except Exception as e:
-        print(e)
+# def get_all_localites(projet_id):
+#     conn = connected_db()
+#     try:
+#         c = conn.cursor()
+#         c.execute(""" SELECT DISTINCT localite FROM ouvrages WHERE projet_id=? ORDER BY created_at DESC """, (projet_id,))
+#         localites = c.fetchall()
+#         return localites
+#     except Exception as e:
+#         print(e)
 
 def get_filtered_ouvrages(type_ouvrage=None, 
                         #   localite=None, 
@@ -213,7 +211,7 @@ def get_all_cantons():
     conn.close()
     return cantons
 
-#     print("✅ Import JSON vers SQLite réussi.")
+# #     print("✅ Import JSON vers SQLite réussi.")
 
 def import_json_to_sqlite(json_path: str):
     """
@@ -311,13 +309,6 @@ def export_sqlite_to_json(file_name):
         print(f"❌ Erreur d'export : {e}")
     finally:
         conn.close()
-
-
-
-
-
-
-
 
 
 def get_stats():
@@ -476,16 +467,16 @@ def get_statistiques():
     return result
 
 
-def convert_to_dict(obj):
-    """Convertit récursivement les defaultdict en dict classiques."""
-    if isinstance(obj, defaultdict):
-        obj = {k: convert_to_dict(v) for k, v in obj.items()}
-    elif isinstance(obj, dict):
-        obj = {k: convert_to_dict(v) for k, v in obj.items()}
-    return obj
+# def convert_to_dict(obj):
+#     """Convertit récursivement les defaultdict en dict classiques."""
+#     if isinstance(obj, defaultdict):
+#         obj = {k: convert_to_dict(v) for k, v in obj.items()}
+#     elif isinstance(obj, dict):
+#         obj = {k: convert_to_dict(v) for k, v in obj.items()}
+#     return obj
 
 
-from collections import defaultdict
+# from collections import defaultdict
 
 def get_stats_commune(nom_commune):
     conn = connected_db()
@@ -996,8 +987,8 @@ def _norm(s):
         return "Inconnue"
     return str(s).strip()
 
-def delete_ouvrage(vid: int):
-    conn = connected_db()
-    conn.execute("DELETE FROM ouvrages WHERE id=?", (vid,))
-    conn.commit()
-    conn.close()
+# def delete_ouvrage(vid: int):
+#     conn = connected_db()
+#     conn.execute("DELETE FROM ouvrages WHERE id=?", (vid,))
+#     conn.commit()
+#     conn.close()

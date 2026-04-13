@@ -1,8 +1,6 @@
 import flet as ft
 
-from appstate import Ouvrage
-from myaction.myaction_foration import Foration
-from myaction.myaction_pompage import Pompage
+from appstate import Ouvrage, Foration, Pompage
 from utils.constants import ACCENT, PRIMARY, SUCCESS, TEXT_DARK, TEXT_GREY, WARNING, section_title 
 
 def _info_row(label: str, value: str) -> ft.Row:

@@ -2,7 +2,7 @@ import flet as ft
 import asyncio
 from mystorage import *
 from screens.projetscreen.projetupdateform import ProjetUpdateForm
-from myaction.myaction_projet import delete_projet, Projet
+from myaction.db_actions import delete_projet, Projet
 from utils.constants import PRIMARY, TEXT_DARK, TEXT_GREY
 
 

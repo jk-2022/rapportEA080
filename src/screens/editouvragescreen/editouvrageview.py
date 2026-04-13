@@ -3,9 +3,8 @@ import asyncio
 import flet as ft 
 
 from donnees import *
-from myaction.myaction_ouvrage import update_ouvrage
+from myaction.db_actions import update_ouvrage, create_entreprise
 from uix.custominputfield import CustomInputField
-from myaction.myaction_entreprise import create_entreprise
 from uix.custominputnumberfield import CustomInputNumberField
 
 class EditOuvrageView(ft.View):

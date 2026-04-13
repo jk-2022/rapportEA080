@@ -6,7 +6,7 @@ from datetime import datetime
 from donnees import *
 from uix.custominputnumberfield import CustomInputNumberField
 from uix.custominputfield import CustomInputField
-from myaction.myaction_pompage import create_pompage
+from myaction.db_actions import create_pompage
 
 # @control
 class PompageForm(Container):

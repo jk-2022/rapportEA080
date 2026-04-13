@@ -1,6 +1,6 @@
 import flet as ft
 from datetime import datetime
-from myaction.myaction_foration import Foration, update_foration
+from myaction.db_actions import Foration, update_foration
 from uix.custominputnumberfield import CustomInputNumberField
 from uix.custominputfield import CustomInputField
 

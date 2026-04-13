@@ -1,7 +1,7 @@
 
 import flet as ft
 from donnees import donnees
-from myaction.myaction_village import update_village, Village
+from myaction.db_actions import update_village, Village
 from uix.custominputfield import CustomInputField
 
 

@@ -3,7 +3,7 @@ import flet as ft
 # import json
 # from donnees import *
 from datetime import datetime
-from myaction.myaction_suivi import Suivi, update_suivi
+from myaction.db_actions import Suivi, update_suivi
 from uix.custominputfield import CustomInputField
 from uix.custominputnumberfield import CustomInputNumberField
 

@@ -10,11 +10,7 @@ from appstate import Projet
 from appstate import Foration
 from appstate import Pompage
 from appstate import Panne 
-from myaction.myaction_pompage import delete_pompage, load_one_pompage
-from myaction.myaction_main import Ouvrage, delete_ouvrage
-from myaction.myaction_foration import load_one_foration, delete_foration
-from myaction.myaction_panne import  load_all_pannes, delete_panne
-from myaction.myaction_suivi import Suivi, load_all_suivis, delete_suivi
+from myaction.db_actions import Ouvrage, Suivi, delete_pompage, load_one_pompage, load_one_foration, delete_foration, load_all_pannes, load_all_suivis, delete_suivi, delete_panne, delete_ouvrage
 
 from .convert_to_text import convert_data_all_to_text, convert_data_foration_to_text, convert_data_pompage_to_text
 from .sections import _section_forage, _section_localisation, _section_observations, _section_pannes, _section_pompage, _section_suivis

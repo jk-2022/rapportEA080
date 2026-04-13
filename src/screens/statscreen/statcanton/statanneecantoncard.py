@@ -1,7 +1,6 @@
 import flet as ft
 from .datatablestat import Mytable_annee, tb_annee
 
-
 class StatAnneeCantonCard(ft.Card):
     def __init__(self, stat_general):
         super().__init__()

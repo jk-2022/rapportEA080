@@ -1,6 +1,6 @@
 import flet as ft
 
-from myaction.myaction_village import delete_village
+from myaction.db_actions import delete_village
 from screens.villagescreen.villageform import VillageForm
 from screens.villagescreen.villageupdateform import VillageUpdateForm
 

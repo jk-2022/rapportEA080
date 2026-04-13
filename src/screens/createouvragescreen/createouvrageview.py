@@ -3,9 +3,8 @@ import asyncio
 import flet as ft 
 from typing import Callable
 from donnees import *
-from myaction.myaction_ouvrage import create_ouvrage
+from myaction.db_actions import create_ouvrage, create_entreprise
 from uix.custominputfield import CustomInputField
-from myaction.myaction_entreprise import create_entreprise
 from uix.custominputnumberfield import CustomInputNumberField
 
 try:

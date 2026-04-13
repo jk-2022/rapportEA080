@@ -1,8 +1,7 @@
 import asyncio
 import flet as ft
 
-from myaction.myaction_ouvrage import Ouvrage
-from myaction.myaction_projet import load_one_projets
+from myaction.db_actions import Ouvrage, load_one_projets
 from utils.constants import TEXT_DARK, TEXT_GREY, categorie_chip, etat_badge
 
 
